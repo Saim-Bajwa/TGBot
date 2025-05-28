@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FRENS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: black;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            height: 50px;
+            border: 2px solid white;
+            border-radius: 20px;
+            margin: 20px;
+            padding: 0 20px;
+            gap: 10px;
+            font-size: 10PX;
+        }
+
+        .header img {
+            height: 30px;
+            width: 30px;
+        }
+
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 2px solid white;
+            border-radius: 20px;
+            height: 450px;
+            width: 90%;
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        
+
+        #footer {
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 40px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            border: 2px solid white;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 20px;
+        }
+
+        .bb {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .bb img {
+            height: 20px;
+            width: 20px;
+            margin-bottom: 5px;
+        }
+        .frens{
+            border: 2px solid white;
+            border-radius: 10px;
+            height: 300px;
+            padding-top: 20px;
+        }
+        #btn{
+            background-color: white;
+            color: black;
+            width: 90%;
+            height: 40px;
+        }
+        #des{
+            padding-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="img.ico" alt="Logo">
+        <h1>FRENS</h1>
+    </header>
+
+    <div class="container">
+        <h1>Frens</h1>
+        <div class="frens">
+            
+            <p>You have no frens</p>
+            <p id="des">You will get 10% of your friend's rewards.</p>
+        </div>
+        <div>
+            <button id="btn">Invite Frens</button>
+        </div>
+    </div>
+
+    <div id="footer">
+        <a class="bb" href="home.html">
+            <img src="home.ico" alt="Home">
+            Home
+        </a>
+        <a class="bb" href="upgrade.html">
+            <img src="upgrades.ico" alt="Upgrades">
+            Upgrades
+        </a>
+        <a class="bb" href="about.html">
+            <img src="about.ico" alt="About">
+            About
+        </a>
+        <a class="bb" href="fren.html">
+            <img src="friends.ico" alt="Friends">
+            Friends
+        </a>
+    </div>
+
+</body>
+</html>
