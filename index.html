@@ -54,18 +54,21 @@
       max-width: 500px;
       max-height: 300px;
       min-height: 200px;
-
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     #txt {
       font-size: 1.1rem;
       margin-top: 10px;
     }
+
     #tg-icon {
       margin-top: 25px;
       width: 60px;
       height: 60px;
-      
     }
 
     /* Responsive adjustments */
@@ -83,6 +86,7 @@
         margin-top: 20px;
         font-size: 1rem;
       }
+
       #tg-icon {
         width: 50px;
         height: 50px;
@@ -97,6 +101,7 @@
       #txt {
         font-size: 1.3rem;
       }
+
       #tg-icon {
         width: 70px;
         height: 70px;
@@ -113,8 +118,8 @@
 
   <div class="container">
     <h2 id="txt">Login to Your Game Account</h2>
-     <img id="tg-icon" src="tg.ico" alt="Telegram Icon">
-    
+    <img id="tg-icon" src="tg.ico" alt="Telegram Icon">
+
     <!-- Telegram Widget -->
     <script async src="https://telegram.org/js/telegram-widget.js?7"
             data-telegram-login="troll_face_token_bot"
