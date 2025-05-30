@@ -2,103 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login with Telegram</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login with Google</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      margin-top: 20px;
       background-color: black;
-      font-family: Arial, sans-serif;
       color: white;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      min-height: 100vh;
       padding: 1rem;
     }
     .header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      border: 2px solid white;
-      border-radius: 20px;
-      padding: 10px 20px;
-      margin-bottom: 30px;
       gap: 10px;
-      width: 100%;
-      max-width: 1000px;
+      margin-bottom: 30px;
+      border: 2px solid white;
+      padding: 10px 20px;
+      border-radius: 20px;
     }
-    .header img {
-      width: 30px;
-      height: 30px;
-    }
-    .header h1 {
-      font-size: 1.2rem;
-    }
+    .header img { width: 30px; height: 30px; }
+    .header h1 { font-size: 1.5rem; }
     .container {
-      margin-top: 30px;
       border: 2px solid white;
       border-radius: 20px;
-      padding: 20px;
+      padding: 40px;
       text-align: center;
-      width: 100%;
-      max-width: 500px;
-      max-height: 300px;
-      min-height: 200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
     }
-    #txt {
-      font-size: 1.1rem;
-      margin-top: 10px;
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background-color: white;
+      color: black;
+      transition: background 0.3s;
     }
-    #tg-icon {
-      margin-top: 25px;
-      width: 60px;
-      height: 60px;
-    }
-    @media (max-width: 480px) {
-      .header h1 { font-size: 1rem; }
-      .header img { width: 24px; height: 24px; }
-      #txt { margin-top: 20px; font-size: 1rem; }
-      #tg-icon { width: 50px; height: 50px; }
-    }
-    @media (min-width: 768px) {
-      .header h1 { font-size: 1.5rem; }
-      #txt { font-size: 1.3rem; }
-      #tg-icon { width: 70px; height: 70px; }
+    button:hover {
+      background-color: #ccc;
     }
   </style>
+  <script>
+    const storedUid = localStorage.getItem("uid");
+    if (storedUid) {
+      window.location.href = `home.html?uid=${storedUid}`;
+    }
+  </script>
 </head>
 <body>
-
-  <header class="header">
-    <img src="img.ico" alt="Logo">
+  <div class="header">
+    <img src="img.ico" alt="Logo" />
     <h1>TROLL FACE TOKEN</h1>
-  </header>
-
+  </div>
   <div class="container">
-    <h2 id="txt">Login to Your Game Account</h2>
-    <img id="tg-icon" src="tg.ico" alt="Telegram Icon">
-
-    <!-- Telegram Login Widget -->
-    <script async src="https://telegram.org/js/telegram-widget.js?7"
-            data-telegram-login="troll_face_token_bot"
-            data-size="large"
-            data-userpic="false"
-            data-request-access="write"
-            data-onauth="onTelegramAuth(user)">
-    </script>
+    <h2>Login to Your Game Account</h2>
+    <button onclick="loginWithGoogle()">Sign in with Google</button>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
   <script>
-    // Firebase config (yours)
     const firebaseConfig = {
       apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
       authDomain: "tg-bot-user.firebaseapp.com",
@@ -110,43 +82,41 @@
       measurementId: "G-R45WHCZ3KZ"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const auth = firebase.auth();
+    const database = firebase.database();
 
-    // Auto-login if already stored
-    const savedUser = JSON.parse(localStorage.getItem("tg_user"));
-    if (savedUser && savedUser.id) {
-      window.location.href = `home.html?uid=${savedUser.id}`;
-    }
+    function loginWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => {
+          const user = result.user;
+          const uid = user.uid;
 
-    // Telegram login handler
-    function onTelegramAuth(user) {
-      localStorage.setItem("tg_user", JSON.stringify(user));
+          localStorage.setItem("uid", uid);
 
-      // Prevent same device multi-accounts
-      const deviceKey = `device_uid`;
-      if (!localStorage.getItem(deviceKey)) {
-        localStorage.setItem(deviceKey, user.id);
-      } else if (localStorage.getItem(deviceKey) != user.id.toString()) {
-        alert("Multiple accounts on the same device are not allowed.");
-        return;
-      }
+          const userRef = database.ref("users/" + uid);
 
-      // Save/update user in DB
-      db.ref("users/" + user.id).set({
-        id: user.id,
-        username: user.username || "",
-        first_name: user.first_name || "",
-        last_name: user.last_name || "",
-        photo_url: user.photo_url || "",
-        auth_date: user.auth_date,
-      });
-
-      // Redirect
-      window.location.href = `home.html?uid=${user.id}`;
+          userRef.once("value", snapshot => {
+            if (!snapshot.exists()) {
+              userRef.set({
+                username: user.displayName || "Anonymous",
+                email: user.email || "",
+                balance: 0,
+                profitPerTap: 1,
+                maxStorage: 10,
+                profitPerTapLevel: 1,
+                storageLevel: 1,
+                createdAt: new Date().toISOString()
+              });
+            }
+            window.location.href = `home.html?uid=${uid}`;
+          });
+        })
+        .catch(error => {
+          alert("Login failed: " + error.message);
+        });
     }
   </script>
-
 </body>
 </html>
