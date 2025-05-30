@@ -96,22 +96,30 @@
     function signUp() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
+
       auth.createUserWithEmailAndPassword(email, password)
         .then(result => {
           const uid = result.user.uid;
           localStorage.setItem("uid", uid);
           const userRef = database.ref("users/" + uid);
-          userRef.set({
-            username: email.split("@")[0],
-            email: email,
-            balance: 0,
-            profitPerTap: 1,
-            maxStorage: 10,
-            profitPerTapLevel: 1,
-            storageLevel: 1,
-            createdAt: new Date().toISOString()
+          userRef.once("value").then(snapshot => {
+            if (!snapshot.exists()) {
+              userRef.set({
+                username: email.split("@")[0],
+                email: email,
+                balance: 100,
+                profitPerTap: 8,
+                maxStorage: 3000,
+                storage: 3000,
+                profitPerTapLevel: 1,
+                profitPerTapUpgradeCost: 0,
+                storageLevel: 1,
+                storageUpgradeCost: 0,
+                createdAt: new Date().toISOString()
+              });
+            }
+            window.location.href = `home.html?uid=${uid}`;
           });
-          window.location.href = `home.html?uid=${uid}`;
         })
         .catch(error => alert("Sign up failed: " + error.message));
     }
