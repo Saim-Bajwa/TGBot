@@ -6,7 +6,94 @@
     <title>ABOUT</title>
    <style>
     /* Existing styles remain mostly unchanged... */
+     * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: black;
+        }
 
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            height: 50px;
+            border: 2px solid white;
+            border-radius: 20px;
+            margin: 20px;
+            padding: 0 20px;
+            gap: 10px;
+            font-size: 10px;
+        }
+
+        .header img {
+            height: 30px;
+            width: 30px;
+        }
+
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 2px solid white;
+            border-radius: 20px;
+            height: 450px;
+            width: 90%;
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .upper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            background-color: white;
+        }
+
+        #dev-img {
+            border-radius: 50%;
+            height: 70px;
+            width: 70px;
+            background: none;
+        }
+
+        .developer-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            text-align: right;
+            background-color: white;
+        }
+
+        .developer-info h1 {
+            font-size: 16px;
+            margin: 0;
+            color: black;
+        }
+
+        .developer-info p {
+            margin: 0;
+            color: gray;
+            font-size: 14px;
+        }
     .description {
         color: black;
         background-color: white;
