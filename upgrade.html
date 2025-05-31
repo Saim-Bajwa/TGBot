@@ -28,17 +28,14 @@
             background-color: white; border-radius: 10px; padding: 5px 10px;
             color: white; height: 100px; width: 90%; margin: 0 auto; position: relative;
         }
-
         .tube .upgrade-level {
             position: absolute; bottom: 0px; left: 0px; font-size: 12px;
             color: gray; border-radius: 5px; border: 2px solid white; padding: 2px;
         }
-
         .tube button {
             height: 40px; width: 80px; background-color: #454444;
             border: none; border-radius: 10px; color: white; cursor: pointer;
         }
-
         .tube button.disabled {
             background-color: gray; cursor: not-allowed;
         }
@@ -49,37 +46,56 @@
             background-color: black; border: 2px solid white; border-radius: 10px;
             padding: 10px; margin: 20px;
         }
-
         .bb {
             display: flex; flex-direction: column; align-items: center;
             text-decoration: none; color: white; cursor: pointer;
         }
-
         .bb img { height: 20px; width: 20px; margin-bottom: 5px; }
 
         .lm, .nm {
             color: black; background-color: white; border: 1px solid black;
             border-radius: 10px; margin: 5px; font-size: 13px;
             height: 50px; width: 70px; align-items: center;
-            justify-content: center;
+            justify-content: center; display: flex;
         }
 
         #loading-layer {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
             background-color: black;
-            display: flex; align-items: center; justify-content: center;
+            border: 2px solid white;
+            border-radius: 20px;
+            padding: 30px;
             z-index: 9999;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid white;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-<div id="loading-layer">Loading...</div>
+<div id="loading-layer">
+    <div style="color:white; font-weight:bold;">Loading...</div>
+    <div class="spinner"></div>
+</div>
 
 <header class="header">
     <img src="img.ico" alt="Logo">
