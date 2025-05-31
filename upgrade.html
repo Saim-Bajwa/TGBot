@@ -86,97 +86,136 @@
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
-        authDomain: "tg-bot-user.firebaseapp.com",
-        databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "tg-bot-user",
-        storageBucket: "tg-bot-user.appspot.com",
-        messagingSenderId: "282564900786",
-        appId: "1:282564900786:web:ff271e609718d5afd056ab"
-    };
+  // Your Firebase config object
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
+    authDomain: "tg-bot-user.firebaseapp.com",
+    databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "tg-bot-user",
+    storageBucket: "tg-bot-user.appspot.com",
+    messagingSenderId: "282564900786",
+    appId: "1:282564900786:web:ff271e609718d5afd056ab"
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
 
-    const elements = {
-        profitTapButton: document.getElementById("profitTapUpgrade"),
-        storageButton: document.getElementById("storageUpgrade"),
-        profitTapCost: document.getElementById("profit-tap-cost"),
-        storageCost: document.getElementById("storage-cost"),
-        profitTapLevel: document.getElementById("profit-tap-level"),
-        storageLevel: document.getElementById("storage-level")
-    };
+  // DOM elements
+  const elements = {
+    profitTapButton: document.getElementById("profitTapUpgrade"),
+    storageButton: document.getElementById("storageUpgrade"),
+    profitTapCost: document.getElementById("profit-tap-cost"),
+    storageCost: document.getElementById("storage-cost"),
+    profitTapLevel: document.getElementById("profit-tap-level"),
+    storageLevel: document.getElementById("storage-level")
+  };
 
-    let user = {
-        balance: 0,
-        profitPerTap: 1,
-        maxStorage: 100,
-        profitPerTapLevel: 1,
-        storageLevel: 1
-    };
-    userId = user.uid;
-    const userRef = db.ref("users/userId");
+  // User data default values
+  let user = {
+    balance: 0,
+    profitPerTap: 1,
+    maxStorage: 100,
+    profitPerTapLevel: 1,
+    storageLevel: 1
+  };
 
-    function getProfitCost(level) {
-        return 20 * Math.pow(2, level - 1);
+  let userId = null;
+  let userRef = null;
+
+  // Upgrade cost functions
+  function getProfitCost(level) {
+    return 20 * Math.pow(2, level - 1);
+  }
+
+  function getStorageCost(level) {
+    return 1000 + (level - 1) * 3000;
+  }
+
+  // Update UI based on user data
+  function updateUI() {
+    const profitCost = getProfitCost(user.profitPerTapLevel);
+    const storageCost = getStorageCost(user.storageLevel);
+
+    elements.profitTapCost.textContent = `Cost: ${profitCost}`;
+    elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
+    elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
+    elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
+
+    elements.profitTapButton.disabled = user.balance < profitCost;
+    elements.storageButton.disabled = user.balance < storageCost || user.storageLevel >= 5;
+
+    elements.profitTapButton.classList.toggle("disabled", user.balance < profitCost);
+    elements.storageButton.classList.toggle("disabled", user.balance < storageCost || user.storageLevel >= 5);
+  }
+
+  // Save user data to Firebase
+  function save() {
+    if (userRef) {
+      userRef.set(user).catch(err => {
+        console.error("Error saving user data:", err);
+      });
     }
+  }
 
-    function getStorageCost(level) {
-        return 1000 + (level - 1) * 3000;
-    }
-
-    function updateUI() {
-        const profitCost = getProfitCost(user.profitPerTapLevel);
-        const storageCost = getStorageCost(user.storageLevel);
-
-        elements.profitTapCost.textContent = `Cost: ${profitCost}`;
-        elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
-        elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
-        elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
-
-        elements.profitTapButton.disabled = user.balance < profitCost;
-        elements.storageButton.disabled = user.balance < storageCost || user.storageLevel >= 5;
-        elements.profitTapButton.classList.toggle("disabled", user.balance < profitCost);
-        elements.storageButton.classList.toggle("disabled", user.balance < storageCost || user.storageLevel >= 5);
-    }
-
-    function save() {
-        userRef.set(user);
-    }
-
-    elements.profitTapButton.addEventListener("click", () => {
-        const cost = getProfitCost(user.profitPerTapLevel);
-        if (user.balance >= cost) {
-            user.balance -= cost;
-            user.profitPerTapLevel++;
-            user.profitPerTap += 1;
-            updateUI();
-            save();
-        }
-    });
-
-    elements.storageButton.addEventListener("click", () => {
-        const cost = getStorageCost(user.storageLevel);
-        if (user.balance >= cost && user.storageLevel < 5) {
-            user.balance -= cost;
-            user.storageLevel++;
-            user.maxStorage += 500; // ← increased by 500 as you wanted
-            updateUI();
-            save();
-        }
-    });
+  // Load user data from Firebase
+  function loadUserData() {
+    if (!userRef) return;
 
     userRef.once("value").then(snapshot => {
-        if (snapshot.exists()) {
-            user = { ...user, ...snapshot.val() };
-        } else {
-            save(); // Save default values if user not found
-        }
-        updateUI();
+      if (snapshot.exists()) {
+        user = { ...user, ...snapshot.val() };
+      } else {
+        // Initialize with default if no data exists yet
+        save();
+      }
+      updateUI();
+    }).catch(err => {
+      console.error("Error loading user data:", err);
     });
+  }
+
+  // Listen for Firebase Authentication state changes
+  auth.onAuthStateChanged(currentUser => {
+    if (currentUser) {
+      userId = currentUser.uid;
+      userRef = db.ref("users/" + userId);
+      loadUserData();
+    } else {
+      alert("Please log in to access your upgrades.");
+      // Optional: redirect to login page or show login UI
+    }
+  });
+
+  // Event listener for profit per tap upgrade button
+  elements.profitTapButton.addEventListener("click", () => {
+    const cost = getProfitCost(user.profitPerTapLevel);
+    if (user.balance >= cost) {
+      user.balance -= cost;
+      user.profitPerTapLevel++;
+      user.profitPerTap += 1;
+      updateUI();
+      save();
+    }
+  });
+
+  // Event listener for storage upgrade button
+  elements.storageButton.addEventListener("click", () => {
+    const cost = getStorageCost(user.storageLevel);
+    if (user.balance >= cost && user.storageLevel < 5) {
+      user.balance -= cost;
+      user.storageLevel++;
+      user.maxStorage += 500;
+      updateUI();
+      save();
+    }
+  });
 </script>
+
 </body>
 </html>
