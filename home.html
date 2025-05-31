@@ -173,9 +173,55 @@
         transform: translateY(-200px);
       }
     }
+
+    /* Loading Overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loadingBox {
+      width: 120px;
+      height: 120px;
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      border: 4px solid white;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
+  <div id="loadingOverlay">
+    <div class="loadingBox">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
   <header class="header">
     <img src="img.ico" alt="Logo">
     <h1>TROLL FACE TOKEN</h1>
@@ -206,126 +252,121 @@
 
   <!-- Firebase SDKs -->
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
-    authDomain: "tg-bot-user.firebaseapp.com",
-    databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "tg-bot-user",
-    storageBucket: "tg-bot-user.appspot.com",
-    messagingSenderId: "282564900786",
-    appId: "1:282564900786:web:ff271e609718d5afd056ab",
-    measurementId: "G-R45WHCZ3KZ"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
+      authDomain: "tg-bot-user.firebaseapp.com",
+      databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "tg-bot-user",
+      storageBucket: "tg-bot-user.appspot.com",
+      messagingSenderId: "282564900786",
+      appId: "1:282564900786:web:ff271e609718d5afd056ab",
+      measurementId: "G-R45WHCZ3KZ"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
 
-  const balanceDisplay = document.getElementById("bal");
-  const storageTube = document.getElementById("storage-tube");
-  const coinButton = document.getElementById("coinButton");
-  const container = document.querySelector(".container");
-  const profitTube = document.getElementById("profit-tube");
+    const balanceDisplay = document.getElementById("bal");
+    const storageTube = document.getElementById("storage-tube");
+    const coinButton = document.getElementById("coinButton");
+    const container = document.querySelector(".container");
+    const profitTube = document.getElementById("profit-tube");
+    const loadingOverlay = document.getElementById("loadingOverlay");
 
-  let balance = 0;
-  let profitPerTap = 1;
-  let storage = 3000;
-  let maxStorage = 3000;
+    let balance = 0;
+    let profitPerTap = 1;
+    let storage = 3000;
+    let maxStorage = 3000;
+    let userId;
 
-  let userId; // Will be assigned when user signs in
-
-  function updateUI() {
-    balanceDisplay.textContent = balance;
-    storageTube.textContent = `Storage: ${storage}/${maxStorage}`;
-    profitTube.textContent = `Profit per tap: ${profitPerTap}`;
-  }
-
-  function toggleCoinButton() {
-    coinButton.disabled = storage <= 0;
-    coinButton.classList.toggle("disabled", storage <= 0);
-  }
-
-  // Listen for auth state changes (when user logs in or page refresh)
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userId = user.uid;
-      const userRef = ref(db, `users/${userId}`);
-      const balanceRef = ref(db, `users/${userId}/balance`);
-      const profitRef = ref(db, `users/${userId}/profitPerTap`);
-      const storageRef = ref(db, `users/${userId}/storage`);
-      const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
-
-      // Fetch user data from database
-      Promise.all([
-        get(balanceRef).then(snap => balance = snap.exists() ? snap.val() : 0),
-        get(profitRef).then(snap => profitPerTap = snap.exists() ? snap.val() : 1),
-        get(storageRef).then(snap => storage = snap.exists() ? snap.val() : 0),
-        get(maxStorageRef).then(snap => maxStorage = snap.exists() ? snap.val() : 100),
-      ]).then(() => {
-        updateUI();
-        toggleCoinButton();
-      });
-
-      // Auto refill storage every second
-      setInterval(() => {
-        if (storage < maxStorage) {
-          storage = Math.min(storage + profitPerTap, maxStorage);
-          set(storageRef, storage);
-          updateUI();
-          toggleCoinButton();
-        }
-      }, 1000);
-
-      // Coin button click event
-      coinButton.addEventListener("click", (e) => {
-        if (storage >= profitPerTap) {
-          balance += profitPerTap;
-          storage -= profitPerTap;
-          updateUI();
-          toggleCoinButton();
-
-          update(userRef, { balance, storage }).catch(console.error);
-
-          const rect = coinButton.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          createFlyingElement(`+${profitPerTap}`, x + rect.left - 68, y + rect.top);
-          createFlyingImage(x + rect.left - 30, y + rect.top + 2);
-        }
-      });
-    } else {
-      // If not signed in, redirect to login page
-      window.location.href = "login.html";
+    function updateUI() {
+      balanceDisplay.textContent = balance;
+      storageTube.textContent = `Storage: ${storage}/${maxStorage}`;
+      profitTube.textContent = `Profit per tap: ${profitPerTap}`;
     }
-  });
 
-  function createFlyingElement(text, x, y) {
-    const element = document.createElement("div");
-    element.textContent = text;
-    element.className = "flying-profit";
-    element.style.left = `${x}px`;
-    element.style.top = `${y}px`;
-    container.appendChild(element);
-    setTimeout(() => container.removeChild(element), 1000);
-  }
+    function toggleCoinButton() {
+      coinButton.disabled = storage <= 0;
+      coinButton.classList.toggle("disabled", storage <= 0);
+    }
 
-  function createFlyingImage(x, y) {
-    const img = document.createElement("img");
-    img.src = "img.ico";
-    img.className = "flying-image";
-    img.style.left = `${x}px`;
-    img.style.top = `${y}px`;
-    img.style.height = "20px";
-    img.style.width = "20px";
-    container.appendChild(img);
-    setTimeout(() => container.removeChild(img), 1000);
-  }
-</script>
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userId = user.uid;
+        const userRef = ref(db, `users/${userId}`);
+        const balanceRef = ref(db, `users/${userId}/balance`);
+        const profitRef = ref(db, `users/${userId}/profitPerTap`);
+        const storageRef = ref(db, `users/${userId}/storage`);
+        const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
 
+        Promise.all([
+          get(balanceRef).then(snap => balance = snap.exists() ? snap.val() : 0),
+          get(profitRef).then(snap => profitPerTap = snap.exists() ? snap.val() : 1),
+          get(storageRef).then(snap => storage = snap.exists() ? snap.val() : 0),
+          get(maxStorageRef).then(snap => maxStorage = snap.exists() ? snap.val() : 100),
+        ]).then(() => {
+          updateUI();
+          toggleCoinButton();
+          loadingOverlay.style.display = "none";
+        });
+
+        setInterval(() => {
+          if (storage < maxStorage) {
+            storage = Math.min(storage + profitPerTap, maxStorage);
+            set(storageRef, storage);
+            updateUI();
+            toggleCoinButton();
+          }
+        }, 1000);
+
+        coinButton.addEventListener("click", (e) => {
+          if (storage >= profitPerTap) {
+            balance += profitPerTap;
+            storage -= profitPerTap;
+            updateUI();
+            toggleCoinButton();
+
+            update(userRef, { balance, storage }).catch(console.error);
+
+            const rect = coinButton.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            createFlyingElement(`+${profitPerTap}`, x + rect.left - 68, y + rect.top);
+            createFlyingImage(x + rect.left - 30, y + rect.top + 2);
+          }
+        });
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    function createFlyingElement(text, x, y) {
+      const element = document.createElement("div");
+      element.textContent = text;
+      element.className = "flying-profit";
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+      container.appendChild(element);
+      setTimeout(() => container.removeChild(element), 1000);
+    }
+
+    function createFlyingImage(x, y) {
+      const img = document.createElement("img");
+      img.src = "img.ico";
+      img.className = "flying-image";
+      img.style.left = `${x}px`;
+      img.style.top = `${y}px`;
+      img.style.height = "20px";
+      img.style.width = "20px";
+      container.appendChild(img);
+      setTimeout(() => container.removeChild(img), 1000);
+    }
+  </script>
 </body>
 </html>
