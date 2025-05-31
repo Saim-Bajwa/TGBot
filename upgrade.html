@@ -54,9 +54,52 @@
             height: 50px; width: 70px; align-items: center;
             justify-content: center;
         }
+        #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loadingBox {
+      width: 120px;
+      height: 120px;
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      border: 4px solid white;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 <body>
+<div id="loadingOverlay">
+    <div class="loadingBox">
+      <div class="spinner"></div>
+    </div>
+</div>    
 <header class="header">
     <img src="img.ico" alt="Logo">
     <h1>UPGRADES</h1>
@@ -115,6 +158,7 @@
     profitTapLevel: document.getElementById("profit-tap-level"),
     storageLevel: document.getElementById("storage-level")
   };
+  const loadingOverlay = document.getElementById("loadingOverlay");
 
   // User data default values
   let user = {
@@ -175,6 +219,7 @@
         save();
       }
       updateUI();
+      loadingOverlay.style.display = "none";
     }).catch(err => {
       console.error("Error loading user data:", err);
     });
