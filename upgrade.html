@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,10 +132,10 @@
         const profitCost = getProfitCost(user.profitPerTapLevel);
         const storageCost = getStorageCost(user.storageLevel);
 
-        elements.profitTapCost.textContent = Cost: ${profitCost};
-        elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : Cost: ${storageCost};
-        elements.profitTapLevel.textContent = Level: ${user.profitPerTapLevel};
-        elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : Level: ${user.storageLevel};
+        elements.profitTapCost.textContent = `Cost: ${profitCost}`;
+        elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
+        elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
+        elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
 
         elements.profitTapButton.disabled = user.balance < profitCost;
         elements.storageButton.disabled = user.balance < storageCost || user.storageLevel >= 5;
