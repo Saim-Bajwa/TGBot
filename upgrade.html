@@ -1,224 +1,246 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>UPGRADES</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; background-color: black; }
-        body { font-family: Arial, sans-serif; }
+  <meta charset="utf-8">
+  <title>UPGRADES</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      background-color: black;
+    }
+    body {
+      font-family: Arial, sans-serif;
+    }
 
-        .header {
-            display: flex; align-items: center; justify-content: center;
-            color: white; height: 50px; border: 2px solid white;
-            border-radius: 20px; margin: 20px; padding: 0 20px;
-            gap: 10px; font-size: 10px;
-        }
-        .header img { height: 30px; width: 30px; }
+    .header {
+      display: flex; align-items: center; justify-content: center;
+      color: white; height: 50px; border: 2px solid white;
+      border-radius: 20px; margin: 20px; padding: 0 20px;
+      gap: 10px; font-size: 10px;
+    }
+    .header img {
+      height: 30px; width: 30px;
+    }
 
-        .container {
-            margin: 20px auto; padding: 20px; border: 2px solid white;
-            border-radius: 20px; height: 450px; width: 90%;
-            text-align: center; color: white; display: flex;
-            flex-direction: column; gap: 20px;
-        }
+    .container {
+      margin: 20px auto; padding: 20px; border: 2px solid white;
+      border-radius: 20px; height: 450px; width: 90%;
+      text-align: center; color: white; display: flex;
+      flex-direction: column; gap: 20px;
+    }
 
-        .tube {
-            display: flex; justify-content: space-between; align-items: center;
-            background-color: white; border-radius: 10px; padding: 5px 10px;
-            color: white; height: 100px; width: 90%; margin: 0 auto; position: relative;
-        }
-        .tube .upgrade-level {
-            position: absolute; bottom: 0px; left: 0px; font-size: 12px;
-            color: gray; border-radius: 5px; border: 2px solid white; padding: 2px;
-        }
-        .tube button {
-            height: 40px; width: 80px; background-color: #454444;
-            border: none; border-radius: 10px; color: white; cursor: pointer;
-        }
-        .tube button.disabled {
-            background-color: gray; cursor: not-allowed;
-        }
+    .tube {
+      display: flex; justify-content: space-between; align-items: center;
+      background-color: white; border-radius: 10px; padding: 5px 10px;
+      color: white; height: 100px; width: 90%; margin: 0 auto; position: relative;
+    }
 
-        #footer {
-            position: fixed; bottom: 0; width: calc(100% - 40px);
-            display: flex; justify-content: space-around; align-items: center;
-            background-color: black; border: 2px solid white; border-radius: 10px;
-            padding: 10px; margin: 20px;
-        }
-        .bb {
-            display: flex; flex-direction: column; align-items: center;
-            text-decoration: none; color: white; cursor: pointer;
-        }
-        .bb img { height: 20px; width: 20px; margin-bottom: 5px; }
+    .tube .upgrade-level {
+      position: absolute; bottom: 0px; left: 0px; font-size: 12px;
+      color: gray; border-radius: 5px; border: 2px solid white; padding: 2px;
+    }
 
-        .lm, .nm {
-            color: black; background-color: white; border: 1px solid black;
-            border-radius: 10px; margin: 5px; font-size: 13px;
-            height: 50px; width: 70px; align-items: center;
-            justify-content: center; display: flex;
-        }
+    .tube button {
+      height: 40px; width: 80px; background-color: #454444;
+      border: none; border-radius: 10px; color: white; cursor: pointer;
+    }
 
-        #loading-layer {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: black;
-            border: 2px solid white;
-            border-radius: 20px;
-            padding: 30px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+    .tube button.disabled {
+      background-color: gray; cursor: not-allowed;
+    }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid white;
-            border-top: 4px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-top: 10px;
-        }
+    #footer {
+      position: fixed; bottom: 0; width: calc(100% - 40px);
+      display: flex; justify-content: space-around; align-items: center;
+      background-color: black; border: 2px solid white; border-radius: 10px;
+      padding: 10px; margin: 20px;
+    }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    .bb {
+      display: flex; flex-direction: column; align-items: center;
+      text-decoration: none; color: white; cursor: pointer;
+    }
+
+    .bb img {
+      height: 20px; width: 20px; margin-bottom: 5px;
+    }
+
+    .lm, .nm {
+      color: black; background-color: white; border: 1px solid black;
+      border-radius: 10px; margin: 5px; font-size: 13px;
+      height: 50px; width: 70px; align-items: center;
+      justify-content: center; display: flex;
+    }
+
+    #loading-layer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(10px);
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      flex-direction: column;
+    }
+
+    #loading-box {
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid white;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-top: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
 
 <div id="loading-layer">
+  <div id="loading-box">
     <div style="color:white; font-weight:bold;">Loading...</div>
     <div class="spinner"></div>
+  </div>
 </div>
 
 <header class="header">
-    <img src="img.ico" alt="Logo">
-    <h1>UPGRADES</h1>
+  <img src="img.ico" alt="Logo">
+  <h1>UPGRADES</h1>
 </header>
 
 <div class="container">
-    <div class="tube" id="profit-tap-tube">
-        <span class="lm">Profit Per Tap</span>
-        <span class="lm" id="profit-tap-cost">Cost: 20</span>
-        <button id="profitTapUpgrade">Upgrade</button>
-        <div class="upgrade-level" id="profit-tap-level">Level: 1</div>
-    </div>
+  <div class="tube" id="profit-tap-tube">
+    <span class="lm">Profit Per Tap</span>
+    <span class="lm" id="profit-tap-cost">Cost: 20</span>
+    <button id="profitTapUpgrade">Upgrade</button>
+    <div class="upgrade-level" id="profit-tap-level">Level: 1</div>
+  </div>
 
-    <div class="tube" id="storage-tube">
-        <span class="nm">Max Storage</span>
-        <span class="nm" id="storage-cost">Cost: 1000</span>
-        <button id="storageUpgrade">Upgrade</button>
-        <div class="upgrade-level" id="storage-level">Level: 1</div>
-    </div>
+  <div class="tube" id="storage-tube">
+    <span class="nm">Max Storage</span>
+    <span class="nm" id="storage-cost">Cost: 1000</span>
+    <button id="storageUpgrade">Upgrade</button>
+    <div class="upgrade-level" id="storage-level">Level: 1</div>
+  </div>
 </div>
 
 <div id="footer">
-    <a class="bb" href="home.html"><img src="home.ico" alt="Home">Home</a>
-    <a class="bb" href="upgrade.html"><img src="upgrades.ico" alt="Upgrades">Upgrades</a>
-    <a class="bb" href="about.html"><img src="about.ico" alt="About">About</a>
-    <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends">Friends</a>
+  <a class="bb" href="home.html"><img src="home.ico" alt="Home">Home</a>
+  <a class="bb" href="upgrade.html"><img src="upgrades.ico" alt="Upgrades">Upgrades</a>
+  <a class="bb" href="about.html"><img src="about.ico" alt="About">About</a>
+  <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends">Friends</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
-        authDomain: "tg-bot-user.firebaseapp.com",
-        databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "tg-bot-user",
-        storageBucket: "tg-bot-user.appspot.com",
-        messagingSenderId: "282564900786",
-        appId: "1:282564900786:web:ff271e609718d5afd056ab"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
+    authDomain: "tg-bot-user.firebaseapp.com",
+    databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "tg-bot-user",
+    storageBucket: "tg-bot-user.appspot.com",
+    messagingSenderId: "282564900786",
+    appId: "1:282564900786:web:ff271e609718d5afd056ab"
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    const elements = {
-        profitTapButton: document.getElementById("profitTapUpgrade"),
-        storageButton: document.getElementById("storageUpgrade"),
-        profitTapCost: document.getElementById("profit-tap-cost"),
-        storageCost: document.getElementById("storage-cost"),
-        profitTapLevel: document.getElementById("profit-tap-level"),
-        storageLevel: document.getElementById("storage-level")
-    };
+  const elements = {
+    profitTapButton: document.getElementById("profitTapUpgrade"),
+    storageButton: document.getElementById("storageUpgrade"),
+    profitTapCost: document.getElementById("profit-tap-cost"),
+    storageCost: document.getElementById("storage-cost"),
+    profitTapLevel: document.getElementById("profit-tap-level"),
+    storageLevel: document.getElementById("storage-level")
+  };
 
-    let user = {
-        balance: 0,
-        profitPerTap: 1,
-        maxStorage: 100,
-        profitPerTapLevel: 1,
-        storageLevel: 1
-    };
+  let user = {
+    balance: 0,
+    profitPerTap: 1,
+    maxStorage: 100,
+    profitPerTapLevel: 1,
+    storageLevel: 1
+  };
 
-    const userRef = db.ref("users/user1");
+  const userRef = db.ref("users/user1");
 
-    function getProfitCost(level) {
-        return 20 * Math.pow(2, level - 1);
+  function getProfitCost(level) {
+    return 20 * Math.pow(2, level - 1);
+  }
+
+  function getStorageCost(level) {
+    return 1000 + (level - 1) * 3000;
+  }
+
+  function updateUI() {
+    const profitCost = getProfitCost(user.profitPerTapLevel);
+    const storageCost = getStorageCost(user.storageLevel);
+
+    elements.profitTapCost.textContent = `Cost: ${profitCost}`;
+    elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
+    elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
+    elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
+
+    elements.profitTapButton.disabled = user.balance < profitCost;
+    elements.storageButton.disabled = user.balance < storageCost || user.storageLevel >= 5;
+    elements.profitTapButton.classList.toggle("disabled", user.balance < profitCost);
+    elements.storageButton.classList.toggle("disabled", user.balance < storageCost || user.storageLevel >= 5);
+  }
+
+  function save() {
+    userRef.set(user);
+  }
+
+  elements.profitTapButton.addEventListener("click", () => {
+    const cost = getProfitCost(user.profitPerTapLevel);
+    if (user.balance >= cost) {
+      user.balance -= cost;
+      user.profitPerTapLevel++;
+      user.profitPerTap += 1;
+      updateUI();
+      save();
     }
+  });
 
-    function getStorageCost(level) {
-        return 1000 + (level - 1) * 3000;
+  elements.storageButton.addEventListener("click", () => {
+    const cost = getStorageCost(user.storageLevel);
+    if (user.balance >= cost && user.storageLevel < 5) {
+      user.balance -= cost;
+      user.storageLevel++;
+      user.maxStorage += 500;
+      updateUI();
+      save();
     }
+  });
 
-    function updateUI() {
-        const profitCost = getProfitCost(user.profitPerTapLevel);
-        const storageCost = getStorageCost(user.storageLevel);
-
-        elements.profitTapCost.textContent = `Cost: ${profitCost}`;
-        elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
-        elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
-        elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
-
-        elements.profitTapButton.disabled = user.balance < profitCost;
-        elements.storageButton.disabled = user.balance < storageCost || user.storageLevel >= 5;
-        elements.profitTapButton.classList.toggle("disabled", user.balance < profitCost);
-        elements.storageButton.classList.toggle("disabled", user.balance < storageCost || user.storageLevel >= 5);
+  userRef.once("value").then(snapshot => {
+    if (snapshot.exists()) {
+      user = { ...user, ...snapshot.val() };
+    } else {
+      save();
     }
-
-    function save() {
-        userRef.set(user);
-    }
-
-    elements.profitTapButton.addEventListener("click", () => {
-        const cost = getProfitCost(user.profitPerTapLevel);
-        if (user.balance >= cost) {
-            user.balance -= cost;
-            user.profitPerTapLevel++;
-            user.profitPerTap += 1;
-            updateUI();
-            save();
-        }
-    });
-
-    elements.storageButton.addEventListener("click", () => {
-        const cost = getStorageCost(user.storageLevel);
-        if (user.balance >= cost && user.storageLevel < 5) {
-            user.balance -= cost;
-            user.storageLevel++;
-            user.maxStorage += 500;
-            updateUI();
-            save();
-        }
-    });
-
-    userRef.once("value").then(snapshot => {
-        if (snapshot.exists()) {
-            user = { ...user, ...snapshot.val() };
-        } else {
-            save();
-        }
-        updateUI();
-    }).finally(() => {
-        document.getElementById("loading-layer").style.display = "none";
-    });
+    updateUI();
+  }).finally(() => {
+    document.getElementById("loading-layer").style.display = "none";
+  });
 </script>
+
 </body>
 </html>
