@@ -213,6 +213,18 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    /* Prevent selection of flying profit and flying images */
+.flying-profit,
+.flying-image {
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Prevent selection of the coin image */
+.coin-button img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
   </style>
 </head>
 <body>
