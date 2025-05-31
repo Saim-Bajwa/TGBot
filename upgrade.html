@@ -117,8 +117,8 @@
         profitPerTapLevel: 1,
         storageLevel: 1
     };
-
-    const userRef = db.ref("users/user1");
+    userId = user.uid;
+    const userRef = db.ref("users/userId");
 
     function getProfitCost(level) {
         return 20 * Math.pow(2, level - 1);
