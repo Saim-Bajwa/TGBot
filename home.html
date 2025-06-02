@@ -20,13 +20,14 @@
     .header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       color: white;
       height: 50px;
       border: 2px solid white;
       border-radius: 20px;
       margin: 20px;
       padding: 0 20px;
+      gap: 10px;
       font-size: 10px;
     }
 
@@ -35,61 +36,198 @@
       width: 30px;
     }
 
-    .header h1 {
-      flex: 1;
+    .container {
+      margin: 20px auto;
+      padding: 20px;
+      border: 2px solid white;
+      border-radius: 20px;
+      height: 100%;
+      width: 90%;
       text-align: center;
-    }
-
-    #menuToggle {
-      cursor: pointer;
+      color: white;
+      position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 4px;
+      justify-content: space-between;
     }
 
-    #menuToggle div {
-      width: 20px;
-      height: 2px;
-      background-color: white;
-    }
-
-    #dropdownMenu {
-      position: absolute;
-      top: 70px;
-      right: 30px;
-      background-color: white;
-      color: black;
-      border-radius: 10px;
-      overflow: hidden;
-      display: none;
-      z-index: 999;
-      font-size: 12px;
-      min-width: 120px;
-    }
-
-    #dropdownMenu .username {
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-    }
-
-    #dropdownMenu .logout {
+    #balance {
+      font-size: 30px;
+      color: white;
       display: flex;
       align-items: center;
-      gap: 5px;
-      padding: 10px;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    #balance img {
+      height: 30px;
+      width: 30px;
+    }
+
+    .coin-button {
+      height: 200px;
+      width: 200px;
+      border-radius: 50%;
+      background-color: #454444;
+      border: 10px solid white;
+      margin: 20px auto;
       cursor: pointer;
-      color: maroon;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.1s, box-shadow 0.1s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    #dropdownMenu .logout:hover {
-      background-color: #f0f0f0;
+    .coin-button:active {
+      transform: translateY(2px);
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    #dropdownMenu .logout img {
-      height: 16px;
-      width: 16px;
+    .coin-button img {
+      height: 60px;
+      width: 60px;
+      background: none;
     }
+
+    .coin-button.disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
+
+    .tubes {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .tube {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      border-radius: 10px;
+      padding: 5px 10px;
+      color: black;
+      height: 40px;
+      width: 80%;
+      margin: 0 auto;
+      font-size: 12px;
+    }
+
+    #footer {
+      position: fixed;
+      bottom: 0;
+      width: calc(100% - 40px);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 20px;
+    }
+
+    .bb {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .bb img {
+      height: 40px;
+      width: 40px;
+      margin-bottom: 5px;
+    }
+
+    .flying-profit {
+      position: absolute;
+      font-size: 16px;
+      font-weight: 900;
+      color: white;
+      animation: flyUp 1s ease-out forwards;
+      background: none;
+    }
+
+    .flying-image {
+      position: absolute;
+      animation: flyUp 1s ease-out forwards;
+      background: none;
+    }
+
+    @keyframes flyUp {
+      from {
+        opacity: 1;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-200px);
+      }
+    }
+
+    /* Loading Overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loadingBox {
+      width: 100px;
+      height: 100px;
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      border: 6px solid white;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* Prevent selection of flying profit and flying images */
+.flying-profit,
+.flying-image {
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Prevent selection of the coin image */
+.coin-button img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
   </style>
 </head>
 <body>
@@ -102,20 +240,10 @@
   <header class="header">
     <img src="img.ico" alt="Logo">
     <h1>TROLL FACE TOKEN</h1>
-    <div id="menuToggle">
-      <div></div>
-      <div></div>
-      <div></div>
+    <div class="dropdown">
+    <button class="dropbtn">☰ Menu</button>
     </div>
   </header>
-
-  <div id="dropdownMenu">
-    <div class="username" id="usernameDisplay">👤 Loading...</div>
-    <div class="logout" onclick="logout()">
-      <img src="logout.ico" alt="Logout Icon">
-      <span>Logout</span>
-    </div>
-  </div>
 
   <div class="container">
     <div id="balance">
@@ -139,26 +267,122 @@
     <a class="bb" href="about.html"><img src="about.ico" alt="About">About</a>
     <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends">Friends</a>
   </div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  <script>
-    // Toggle menu visibility
-    const menuToggle = document.getElementById('menuToggle');
-    const dropdownMenu = document.getElementById('dropdownMenu');
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
+      authDomain: "tg-bot-user.firebaseapp.com",
+      databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "tg-bot-user",
+      storageBucket: "tg-bot-user.appspot.com",
+      messagingSenderId: "282564900786",
+      appId: "1:282564900786:web:ff271e609718d5afd056ab",
+      measurementId: "G-R45WHCZ3KZ"
+    };
 
-    menuToggle.addEventListener('click', () => {
-      dropdownMenu.style.display = (dropdownMenu.style.display === 'block') ? 'none' : 'block';
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    const balanceDisplay = document.getElementById("bal");
+    const storageTube = document.getElementById("storage-tube");
+    const coinButton = document.getElementById("coinButton");
+    const container = document.querySelector(".container");
+    const profitTube = document.getElementById("profit-tube");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+
+    let balance = 0;
+    let profitPerTap = 1;
+    let storage = 3000;
+    let maxStorage = 3000;
+    let userId;
+
+    function updateUI() {
+      balanceDisplay.textContent = balance;
+      storageTube.textContent = Storage: ${storage}/${maxStorage};
+      profitTube.textContent = Profit per tap: ${profitPerTap};
+    }
+
+    function toggleCoinButton() {
+      coinButton.disabled = storage <= 0;
+      coinButton.classList.toggle("disabled", storage <= 0);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userId = user.uid;
+        const userRef = ref(db, users/${userId});
+        const balanceRef = ref(db, users/${userId}/balance);
+        const profitRef = ref(db, users/${userId}/profitPerTap);
+        const storageRef = ref(db, users/${userId}/storage);
+        const maxStorageRef = ref(db, users/${userId}/maxStorage);
+
+        Promise.all([
+          get(balanceRef).then(snap => balance = snap.exists() ? snap.val() : 0),
+          get(profitRef).then(snap => profitPerTap = snap.exists() ? snap.val() : 1),
+          get(storageRef).then(snap => storage = snap.exists() ? snap.val() : 0),
+          get(maxStorageRef).then(snap => maxStorage = snap.exists() ? snap.val() : 100),
+        ]).then(() => {
+          updateUI();
+          toggleCoinButton();
+          loadingOverlay.style.display = "none";
+        });
+
+        setInterval(() => {
+          if (storage < maxStorage) {
+            storage = Math.min(storage + profitPerTap, maxStorage);
+            set(storageRef, storage);
+            updateUI();
+            toggleCoinButton();
+          }
+        }, 1000);
+
+        coinButton.addEventListener("click", (e) => {
+          if (storage >= profitPerTap) {
+            balance += profitPerTap;
+            storage -= profitPerTap;
+            updateUI();
+            toggleCoinButton();
+
+            update(userRef, { balance, storage }).catch(console.error);
+
+            const rect = coinButton.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            createFlyingElement(+${profitPerTap}, x + rect.left - 68, y + rect.top);
+            createFlyingImage(x + rect.left - 30, y + rect.top + 2);
+          }
+        });
+      } else {
+        window.location.href = "login.html";
+      }
     });
 
-    // Load username from localStorage or Firebase
-    const username = localStorage.getItem("username") || "Guest";
-    document.getElementById("usernameDisplay").innerText = "👤 " + username;
+    function createFlyingElement(text, x, y) {
+      const element = document.createElement("div");
+      element.textContent = text;
+      element.className = "flying-profit";
+      element.style.left = ${x}px;
+      element.style.top = ${y}px;
+      container.appendChild(element);
+      setTimeout(() => container.removeChild(element), 1000);
+    }
 
-    // Logout function
-    function logout() {
-      localStorage.clear(); // clear all user state
-      alert("Logged out successfully!");
-      window.location.href = "index.html"; // redirect to login
+    function createFlyingImage(x, y) {
+      const img = document.createElement("img");
+      img.src = "img.ico";
+      img.className = "flying-image";
+      img.style.left = ${x}px;
+      img.style.top = ${y}px;
+      img.style.height = "20px";
+      img.style.width = "20px";
+      container.appendChild(img);
+      setTimeout(() => container.removeChild(img), 1000);
     }
   </script>
-</body>
-</html>
+  </body>
+  </html>
