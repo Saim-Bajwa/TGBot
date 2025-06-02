@@ -475,6 +475,32 @@
       dropdown.classList.remove("show");
     }
   });
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, get } from "firebase/database";
+
+const auth = getAuth();
+const db = getDatabase();
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const uid = user.uid;
+    const usernameRef = ref(db, `users/${uid}/username`);
+
+    get(usernameRef)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const username = snapshot.val();
+          document.getElementById("usernameDisplay").innerText = `👤 ${username}`;
+        } else {
+          document.getElementById("usernameDisplay").innerText = "👤 Unknown User";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching username:", error);
+      });
+  }
+});
+
 </script>
 
 </body>
