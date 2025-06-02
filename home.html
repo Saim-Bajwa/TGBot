@@ -65,64 +65,6 @@
       height: 30px;
       width: 30px;
     }
-    .dropdown {
-  position: relative;
-}
-
-.dropbtn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-#dropdownMenu {
-  display: none;
-  position: absolute;
-  top: 50px;
-  right: 0;
-  background-color: black;
-  border: 2px solid white;
-  border-radius: 10px;
-  padding: 10px;
-  width: 160px;
-  z-index: 10000;
-  flex-direction: column;
-  gap: 10px;
-  font-size: 14px;
-}
-
-#dropdownMenu.show {
-  display: flex;
-}
-
-.username {
-  color: white;
-  padding: 8px;
-  border-bottom: 1px solid white;
-}
-
-.logout {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  color: red;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.logout:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-}
-
-.logout img {
-  width: 16px;
-  height: 16px;
-}
-
 
     .coin-button {
       height: 200px;
@@ -298,14 +240,9 @@
   <header class="header">
     <img src="img.ico" alt="Logo">
     <h1>TROLL FACE TOKEN</h1>
-    <div id="dropdownMenu" class="dropdown-content">
-       <div class="username">👤 Username</div>
-          <div class="logout" onclick="logout()">
-             <img src="logout.ico" alt="Logout Icon">
-             <span>Logout</span>
-       </div>
-     </div>   
-  
+    <div class="dropdown">
+    <button class="dropbtn">☰ Menu</button>
+    </div>
   </header>
 
   <div class="container">
@@ -332,145 +269,124 @@
   </div>
 
   <!-- Firebase SDKs -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+ <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
-    authDomain: "tg-bot-user.firebaseapp.com",
-    databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "tg-bot-user",
-    storageBucket: "tg-bot-user.appspot.com",
-    messagingSenderId: "282564900786",
-    appId: "1:282564900786:web:ff271e609718d5afd056ab",
-    measurementId: "G-R45WHCZ3KZ"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
+      authDomain: "tg-bot-user.firebaseapp.com",
+      databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "tg-bot-user",
+      storageBucket: "tg-bot-user.appspot.com",
+      messagingSenderId: "282564900786",
+      appId: "1:282564900786:web:ff271e609718d5afd056ab",
+      measurementId: "G-R45WHCZ3KZ"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
 
-  const balanceDisplay = document.getElementById("bal");
-  const storageTube = document.getElementById("storage-tube");
-  const coinButton = document.getElementById("coinButton");
-  const container = document.querySelector(".container");
-  const profitTube = document.getElementById("profit-tube");
-  const loadingOverlay = document.getElementById("loadingOverlay");
-  const menuButton = document.querySelector(".dropbtn");
-  const dropdown = document.getElementById("dropdownMenu");
+    const balanceDisplay = document.getElementById("bal");
+    const storageTube = document.getElementById("storage-tube");
+    const coinButton = document.getElementById("coinButton");
+    const container = document.querySelector(".container");
+    const profitTube = document.getElementById("profit-tube");
+    const loadingOverlay = document.getElementById("loadingOverlay");
 
-  let balance = 0;
-  let profitPerTap = 1;
-  let storage = 3000;
-  let maxStorage = 3000;
-  let userId;
+    let balance = 0;
+    let profitPerTap = 1;
+    let storage = 3000;
+    let maxStorage = 3000;
+    let userId;
 
-    menuButton.addEventListener("click", () => {
-    dropdown.classList.toggle("show");
-  });
-  function updateUI() {
-    balanceDisplay.textContent = balance;
-    storageTube.textContent = `Storage: ${storage}/${maxStorage}`;
-    profitTube.textContent = `Profit per tap: ${profitPerTap}`;
-  }
-
-  function toggleCoinButton() {
-    coinButton.disabled = storage <= 0;
-    coinButton.classList.toggle("disabled", storage <= 0);
-  }
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userId = user.uid;
-      const userRef = ref(db, `users/${userId}`);
-      const balanceRef = ref(db, `users/${userId}/balance`);
-      const profitRef = ref(db, `users/${userId}/profitPerTap`);
-      const storageRef = ref(db, `users/${userId}/storage`);
-      const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
-
-      Promise.all([
-        get(balanceRef).then(snap => balance = snap.exists() ? snap.val() : 0),
-        get(profitRef).then(snap => profitPerTap = snap.exists() ? snap.val() : 1),
-        get(storageRef).then(snap => storage = snap.exists() ? snap.val() : 0),
-        get(maxStorageRef).then(snap => maxStorage = snap.exists() ? snap.val() : 100),
-      ]).then(() => {
-        updateUI();
-        toggleCoinButton();
-        loadingOverlay.style.display = "none";
-      });
-
-      setInterval(() => {
-        if (storage < maxStorage) {
-          storage = Math.min(storage + profitPerTap, maxStorage);
-          set(storageRef, storage);
-          updateUI();
-          toggleCoinButton();
-        }
-      }, 1000);
-
-      coinButton.addEventListener("click", (e) => {
-        if (storage >= profitPerTap) {
-          balance += profitPerTap;
-          storage -= profitPerTap;
-          updateUI();
-          toggleCoinButton();
-
-          update(userRef, { balance, storage }).catch(console.error);
-
-          const rect = coinButton.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          createFlyingElement(`+${profitPerTap}`, x + rect.left - 68, y + rect.top);
-          createFlyingImage(x + rect.left - 30, y + rect.top + 2);
-        }
-      });
-
-    } else {
-      window.location.href = "login.html";
+    function updateUI() {
+      balanceDisplay.textContent = balance;
+      storageTube.textContent = `Storage: ${storage}/${maxStorage}`;
+      profitTube.textContent = `Profit per tap: ${profitPerTap}`;
     }
-  });
 
-  function createFlyingElement(text, x, y) {
-    const element = document.createElement("div");
-    element.textContent = text;
-    element.className = "flying-profit";
-    element.style.left = `${x}px`;
-    element.style.top = `${y}px`;
-    container.appendChild(element);
-    setTimeout(() => container.removeChild(element), 1000);
-  }
+    function toggleCoinButton() {
+      coinButton.disabled = storage <= 0;
+      coinButton.classList.toggle("disabled", storage <= 0);
+    }
 
-  function createFlyingImage(x, y) {
-    const img = document.createElement("img");
-    img.src = "img.ico";
-    img.className = "flying-image";
-    img.style.left = `${x}px`;
-    img.style.top = `${y}px`;
-    img.style.height = "20px";
-    img.style.width = "20px";
-    container.appendChild(img);
-    setTimeout(() => container.removeChild(img), 1000);
-  }
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userId = user.uid;
+        const userRef = ref(db, `users/${userId}`);
+        const balanceRef = ref(db, `users/${userId}/balance`);
+        const profitRef = ref(db, `users/${userId}/profitPerTap`);
+        const storageRef = ref(db, `users/${userId}/storage`);
+        const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
 
-  // 🔴 Logout Function
-  window.logout = function() {
-    localStorage.clear();
-    signOut(auth).then(() => {
-      window.location.href = "index.html";
-    }).catch((error) => {
-      console.error("Logout error:", error);
-      alert("Failed to logout.");
+        Promise.all([
+          get(balanceRef).then(snap => balance = snap.exists() ? snap.val() : 0),
+          get(profitRef).then(snap => profitPerTap = snap.exists() ? snap.val() : 1),
+          get(storageRef).then(snap => storage = snap.exists() ? snap.val() : 0),
+          get(maxStorageRef).then(snap => maxStorage = snap.exists() ? snap.val() : 100),
+        ]).then(() => {
+          updateUI();
+          toggleCoinButton();
+          loadingOverlay.style.display = "none";
+        });
+
+        setInterval(() => {
+          if (storage < maxStorage) {
+            storage = Math.min(storage + profitPerTap, maxStorage);
+            set(storageRef, storage);
+            updateUI();
+            toggleCoinButton();
+          }
+        }, 1000);
+
+        coinButton.addEventListener("click", (e) => {
+          if (storage >= profitPerTap) {
+            balance += profitPerTap;
+            storage -= profitPerTap;
+            updateUI();
+            toggleCoinButton();
+
+            update(userRef, { balance, storage }).catch(console.error);
+
+            const rect = coinButton.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            createFlyingElement(`+${profitPerTap}`, x + rect.left - 68, y + rect.top);
+            createFlyingImage(x + rect.left - 30, y + rect.top + 2);
+          }
+        });
+      } else {
+        window.location.href = "login.html";
+      }
     });
-  };
-    document.addEventListener("click", function(event) {
-    if (!event.target.closest(".dropdown") && !event.target.closest("#dropdownMenu")) {
-      dropdown.classList.remove("show");
+
+    function createFlyingElement(text, x, y) {
+      const element = document.createElement("div");
+      element.textContent = text;
+      element.className = "flying-profit";
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+      container.appendChild(element);
+      setTimeout(() => container.removeChild(element), 1000);
     }
-  });
-</script>
+
+    function createFlyingImage(x, y) {
+      const img = document.createElement("img");
+      img.src = "img.ico";
+      img.className = "flying-image";
+      img.style.left = `${x}px`;
+      img.style.top = `${y}px`;
+      img.style.height = "20px";
+      img.style.width = "20px";
+      container.appendChild(img);
+      setTimeout(() => container.removeChild(img), 1000);
+    }
+  </script>
+
 
 </body>
 </html>
