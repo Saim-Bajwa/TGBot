@@ -295,23 +295,18 @@
     </div>
   </div>
 
-<header class="header">
-  <img src="img.ico" alt="Logo">
-  <h1>TROLL FACE TOKEN</h1>
-  
-  <!-- Dropdown Trigger Button -->
-  <div class="dropdown">
-    <button class="dropbtn">☰</button> <!-- Hamburger-style menu button -->
+  <header class="header">
+    <img src="img.ico" alt="Logo">
+    <h1>TROLL FACE TOKEN</h1>
     <div id="dropdownMenu" class="dropdown-content">
-      <div id="usernameDisplay" class="username">👤 Loading...</div>
-      <div class="logout" onclick="logout()">
-        <img src="logout.ico" alt="Logout Icon">
-        <span>Logout</span>
-      </div>
-    </div>
-  </div>
-</header>
-
+       <div class="username">👤 Username</div>
+          <div class="logout" onclick="logout()">
+             <img src="logout.ico" alt="Logout Icon">
+             <span>Logout</span>
+       </div>
+     </div>   
+  
+  </header>
 
   <div class="container">
     <div id="balance">
@@ -365,7 +360,6 @@
   const loadingOverlay = document.getElementById("loadingOverlay");
   const menuButton = document.querySelector(".dropbtn");
   const dropdown = document.getElementById("dropdownMenu");
-  const usernameDisplay = document.getElementById("usernameDisplay");
 
   let balance = 0;
   let profitPerTap = 1;
@@ -373,16 +367,9 @@
   let maxStorage = 3000;
   let userId;
 
-  menuButton.addEventListener("click", () => {
+    menuButton.addEventListener("click", () => {
     dropdown.classList.toggle("show");
   });
-
-  document.addEventListener("click", function(event) {
-    if (!event.target.closest(".dropdown") && !event.target.closest("#dropdownMenu")) {
-      dropdown.classList.remove("show");
-    }
-  });
-
   function updateUI() {
     balanceDisplay.textContent = balance;
     storageTube.textContent = `Storage: ${storage}/${maxStorage}`;
@@ -393,6 +380,58 @@
     coinButton.disabled = storage <= 0;
     coinButton.classList.toggle("disabled", storage <= 0);
   }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      userId = user.uid;
+      const userRef = ref(db, `users/${userId}`);
+      const balanceRef = ref(db, `users/${userId}/balance`);
+      const profitRef = ref(db, `users/${userId}/profitPerTap`);
+      const storageRef = ref(db, `users/${userId}/storage`);
+      const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
+
+      Promise.all([
+        get(balanceRef).then(snap => balance = snap.exists() ? snap.val() : 0),
+        get(profitRef).then(snap => profitPerTap = snap.exists() ? snap.val() : 1),
+        get(storageRef).then(snap => storage = snap.exists() ? snap.val() : 0),
+        get(maxStorageRef).then(snap => maxStorage = snap.exists() ? snap.val() : 100),
+      ]).then(() => {
+        updateUI();
+        toggleCoinButton();
+        loadingOverlay.style.display = "none";
+      });
+
+      setInterval(() => {
+        if (storage < maxStorage) {
+          storage = Math.min(storage + profitPerTap, maxStorage);
+          set(storageRef, storage);
+          updateUI();
+          toggleCoinButton();
+        }
+      }, 1000);
+
+      coinButton.addEventListener("click", (e) => {
+        if (storage >= profitPerTap) {
+          balance += profitPerTap;
+          storage -= profitPerTap;
+          updateUI();
+          toggleCoinButton();
+
+          update(userRef, { balance, storage }).catch(console.error);
+
+          const rect = coinButton.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          createFlyingElement(`+${profitPerTap}`, x + rect.left - 68, y + rect.top);
+          createFlyingImage(x + rect.left - 30, y + rect.top + 2);
+        }
+      });
+
+    } else {
+      window.location.href = "login.html";
+    }
+  });
 
   function createFlyingElement(text, x, y) {
     const element = document.createElement("div");
@@ -416,7 +455,8 @@
     setTimeout(() => container.removeChild(img), 1000);
   }
 
-  window.logout = function () {
+  // 🔴 Logout Function
+  window.logout = function() {
     localStorage.clear();
     signOut(auth).then(() => {
       window.location.href = "index.html";
@@ -425,72 +465,12 @@
       alert("Failed to logout.");
     });
   };
-
-  // ✅ Single Auth Handler
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userId = user.uid;
-      const userRef = ref(db, `users/${userId}`);
-      const balanceRef = ref(db, `users/${userId}/balance`);
-      const profitRef = ref(db, `users/${userId}/profitPerTap`);
-      const storageRef = ref(db, `users/${userId}/storage`);
-      const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
-      const usernameRef = ref(db, `users/${userId}/username`);
-
-      // Fetch all at once
-      Promise.all([
-        get(balanceRef).then(snap => balance = snap.exists() ? snap.val() : 0),
-        get(profitRef).then(snap => profitPerTap = snap.exists() ? snap.val() : 1),
-        get(storageRef).then(snap => storage = snap.exists() ? snap.val() : 0),
-        get(maxStorageRef).then(snap => maxStorage = snap.exists() ? snap.val() : 100),
-        get(usernameRef).then(snap => {
-          if (snap.exists()) {
-            usernameDisplay.innerText = `👤 ${snap.val()}`;
-          } else {
-            usernameDisplay.innerText = "👤 Unknown User";
-          }
-        }),
-      ]).then(() => {
-        updateUI();
-        toggleCoinButton();
-        loadingOverlay.style.display = "none";
-      });
-
-      // Regenerate storage every second
-      setInterval(() => {
-        if (storage < maxStorage) {
-          storage = Math.min(storage + profitPerTap, maxStorage);
-          set(storageRef, storage);
-          updateUI();
-          toggleCoinButton();
-        }
-      }, 1000);
-
-      // Tap button click
-      coinButton.addEventListener("click", (e) => {
-        if (storage >= profitPerTap) {
-          balance += profitPerTap;
-          storage -= profitPerTap;
-          updateUI();
-          toggleCoinButton();
-
-          update(userRef, { balance, storage }).catch(console.error);
-
-          const rect = coinButton.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          createFlyingElement(`+${profitPerTap}`, x + rect.left - 68, y + rect.top);
-          createFlyingImage(x + rect.left - 30, y + rect.top + 2);
-        }
-      });
-
-    } else {
-      window.location.href = "login.html";
+    document.addEventListener("click", function(event) {
+    if (!event.target.closest(".dropdown") && !event.target.closest("#dropdownMenu")) {
+      dropdown.classList.remove("show");
     }
   });
 </script>
-
 
 </body>
 </html>
