@@ -308,13 +308,13 @@
   let profitPerTap = 1;
   let storage = 3000;
   let maxStorage = 3000;
-  let userId;
+  let userId = null;
 
   menuButton.addEventListener("click", () => {
     dropdown.classList.toggle("show");
   });
 
-  document.addEventListener("click", function(event) {
+  document.addEventListener("click", (event) => {
     if (!event.target.closest(".dropdown") && !event.target.closest("#dropdownMenu")) {
       dropdown.classList.remove("show");
     }
@@ -327,8 +327,9 @@
   }
 
   function toggleCoinButton() {
-    coinButton.disabled = storage <= 0;
-    coinButton.classList.toggle("disabled", storage <= 0);
+    const disabled = storage <= 0;
+    coinButton.disabled = disabled;
+    coinButton.classList.toggle("disabled", disabled);
   }
 
   function createFlyingElement(text, x, y) {
@@ -355,45 +356,49 @@
 
   window.logout = function () {
     localStorage.clear();
-    signOut(auth).then(() => {
-      window.location.href = "index.html";
-    }).catch((error) => {
-      console.error("Logout error:", error);
-      alert("Failed to logout.");
-    });
+    signOut(auth)
+      .then(() => {
+        window.location.href = "index.html";
+      })
+      .catch((error) => {
+        console.error("Logout error:", error);
+        alert("Failed to logout.");
+      });
   };
 
-  // ✅ Single Auth Handler
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userId = user.uid;
-      const userRef = ref(db, `users/${userId}`);
-      const balanceRef = ref(db, `users/${userId}/balance`);
-      const profitRef = ref(db, `users/${userId}/profitPerTap`);
-      const storageRef = ref(db, `users/${userId}/storage`);
-      const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
-      const usernameRef = ref(db, `users/${userId}/username`);
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
 
-      // Fetch all at once
-      Promise.all([
-        get(balanceRef).then(snap => balance = snap.exists() ? snap.val() : 0),
-        get(profitRef).then(snap => profitPerTap = snap.exists() ? snap.val() : 1),
-        get(storageRef).then(snap => storage = snap.exists() ? snap.val() : 0),
-        get(maxStorageRef).then(snap => maxStorage = snap.exists() ? snap.val() : 100),
-        get(usernameRef).then(snap => {
-          if (snap.exists()) {
-            usernameDisplay.innerText = `👤 ${snap.val()}`;
-          } else {
-            usernameDisplay.innerText = "👤 Unknown User";
-          }
-        }),
-      ]).then(() => {
-        updateUI();
-        toggleCoinButton();
-        loadingOverlay.style.display = "none";
-      });
+    userId = user.uid;
+    const userRef = ref(db, `users/${userId}`);
+    const balanceRef = ref(db, `users/${userId}/balance`);
+    const profitRef = ref(db, `users/${userId}/profitPerTap`);
+    const storageRef = ref(db, `users/${userId}/storage`);
+    const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
+    const usernameRef = ref(db, `users/${userId}/username`);
 
-      // Regenerate storage every second
+    try {
+      const [balSnap, profitSnap, storageSnap, maxSnap, nameSnap] = await Promise.all([
+        get(balanceRef),
+        get(profitRef),
+        get(storageRef),
+        get(maxStorageRef),
+        get(usernameRef),
+      ]);
+
+      balance = balSnap.exists() ? balSnap.val() : 0;
+      profitPerTap = profitSnap.exists() ? profitSnap.val() : 1;
+      storage = storageSnap.exists() ? storageSnap.val() : 0;
+      maxStorage = maxSnap.exists() ? maxSnap.val() : 100;
+      usernameDisplay.innerText = nameSnap.exists() ? `👤 ${nameSnap.val()}` : "👤 Unknown User";
+
+      updateUI();
+      toggleCoinButton();
+      loadingOverlay.style.display = "none";
+
       setInterval(() => {
         if (storage < maxStorage) {
           storage = Math.min(storage + profitPerTap, maxStorage);
@@ -403,11 +408,11 @@
         }
       }, 1000);
 
-      // Tap button click
       coinButton.addEventListener("click", (e) => {
         if (storage >= profitPerTap) {
           balance += profitPerTap;
           storage -= profitPerTap;
+
           updateUI();
           toggleCoinButton();
 
@@ -421,12 +426,13 @@
           createFlyingImage(x + rect.left - 30, y + rect.top + 2);
         }
       });
-
-    } else {
-      window.location.href = "login.html";
+    } catch (err) {
+      console.error("Error loading user data:", err);
+      alert("Failed to load user data.");
     }
   });
 </script>
+
 
 
 
