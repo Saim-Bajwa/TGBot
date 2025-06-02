@@ -20,14 +20,13 @@
     .header {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       color: white;
       height: 50px;
       border: 2px solid white;
       border-radius: 20px;
       margin: 20px;
       padding: 0 20px;
-      gap: 10px;
       font-size: 10px;
     }
 
@@ -36,195 +35,60 @@
       width: 30px;
     }
 
-    .container {
-      margin: 20px auto;
-      padding: 20px;
-      border: 2px solid white;
-      border-radius: 20px;
-      height: 100%;
-      width: 90%;
+    .header h1 {
+      flex: 1;
       text-align: center;
-      color: white;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
     }
 
-    #balance {
-      font-size: 30px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-weight: 700;
-    }
-
-    #balance img {
-      height: 30px;
-      width: 30px;
-    }
-
-    .coin-button {
-      height: 200px;
-      width: 200px;
-      border-radius: 50%;
-      background-color: #454444;
-      border: 10px solid white;
-      margin: 20px auto;
+    #menuToggle {
       cursor: pointer;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-      transition: transform 0.1s, box-shadow 0.1s;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .coin-button:active {
-      transform: translateY(2px);
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .coin-button img {
-      height: 60px;
-      width: 60px;
-      background: none;
-    }
-
-    .coin-button.disabled {
-      background-color: gray;
-      cursor: not-allowed;
-    }
-
-    .tubes {
-      margin-top: 15px;
-      display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 10px;
+      justify-content: center;
+      gap: 4px;
     }
 
-    .tube {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    #menuToggle div {
+      width: 20px;
+      height: 2px;
       background-color: white;
-      border-radius: 10px;
-      padding: 5px 10px;
+    }
+
+    #dropdownMenu {
+      position: absolute;
+      top: 70px;
+      right: 30px;
+      background-color: white;
       color: black;
-      height: 40px;
-      width: 80%;
-      margin: 0 auto;
-      font-size: 12px;
-    }
-
-    #footer {
-      position: fixed;
-      bottom: 0;
-      width: calc(100% - 40px);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background-color: black;
-      border: 2px solid white;
       border-radius: 10px;
+      overflow: hidden;
+      display: none;
+      z-index: 999;
+      font-size: 12px;
+      min-width: 120px;
+    }
+
+    #dropdownMenu .username {
       padding: 10px;
-      margin: 20px;
+      border-bottom: 1px solid #ccc;
     }
 
-    .bb {
+    #dropdownMenu .logout {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      text-decoration: none;
-      color: white;
+      gap: 5px;
+      padding: 10px;
       cursor: pointer;
-      font-size: 0.7rem;
+      color: maroon;
     }
 
-    .bb img {
-      height: 40px;
-      width: 40px;
-      margin-bottom: 5px;
+    #dropdownMenu .logout:hover {
+      background-color: #f0f0f0;
     }
 
-    .flying-profit {
-      position: absolute;
-      font-size: 16px;
-      font-weight: 900;
-      color: white;
-      animation: flyUp 1s ease-out forwards;
-      background: none;
-    }
-
-    .flying-image {
-      position: absolute;
-      animation: flyUp 1s ease-out forwards;
-      background: none;
-    }
-
-    @keyframes flyUp {
-      from {
-        opacity: 1;
-        transform: translateY(-50px);
-      }
-      to {
-        opacity: 0;
-        transform: translateY(-200px);
-      }
-    }
-
-    #loadingOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      backdrop-filter: blur(10px);
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 9999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .loadingBox {
-      width: 100px;
-      height: 100px;
-      background-color: black;
-      border: 2px solid white;
-      border-radius: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .spinner {
-      border: 6px solid white;
-      border-top: 4px solid transparent;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .flying-profit,
-    .flying-image {
-      user-select: none;
-      pointer-events: none;
-    }
-
-    .coin-button img {
-      user-select: none;
-      -webkit-user-drag: none;
+    #dropdownMenu .logout img {
+      height: 16px;
+      width: 16px;
     }
   </style>
 </head>
@@ -238,19 +102,25 @@
   <header class="header">
     <img src="img.ico" alt="Logo">
     <h1>TROLL FACE TOKEN</h1>
-    <div id="dropdownMenu" class="dropdown-content">
-      <div id="usernameDisplay" class="username">👤 Loading...</div>
-      <div class="logout" onclick="logout()">
-        <img src="logout.ico" alt="Logout Icon">
-        <span>Logout</span>
-      </div>
+    <div id="menuToggle">
+      <div></div>
+      <div></div>
+      <div></div>
     </div>
   </header>
+
+  <div id="dropdownMenu">
+    <div class="username" id="usernameDisplay">👤 Loading...</div>
+    <div class="logout" onclick="logout()">
+      <img src="logout.ico" alt="Logout Icon">
+      <span>Logout</span>
+    </div>
+  </div>
 
   <div class="container">
     <div id="balance">
       <img src="img.ico" alt="Points Icon">
-      <span id="bal">0</span>
+      <span id="bal"></span>
     </div>
 
     <button class="coin-button" id="coinButton">
@@ -258,8 +128,8 @@
     </button>
 
     <div class="tubes">
-      <div class="tube" id="profit-tube">Profit per tap: 0</div>
-      <div class="tube" id="storage-tube">Storage: 0</div>
+      <div class="tube" id="profit-tube">Profit per tap: </div>
+      <div class="tube" id="storage-tube">Storage:</div>
     </div>
   </div>
 
@@ -271,48 +141,24 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const coinButton = document.getElementById("coinButton");
-      const balDisplay = document.getElementById("bal");
-      const profitTube = document.getElementById("profit-tube");
-      const storageTube = document.getElementById("storage-tube");
+    // Toggle menu visibility
+    const menuToggle = document.getElementById('menuToggle');
+    const dropdownMenu = document.getElementById('dropdownMenu');
 
-      let balance = 0;
-      let profitPerTap = 1;
-      let storage = 100;
-
-      function updateDisplay() {
-        balDisplay.textContent = balance;
-        profitTube.textContent = `Profit per tap: ${profitPerTap}`;
-        storageTube.textContent = `Storage: ${storage}`;
-      }
-
-      coinButton.addEventListener("click", () => {
-        if (balance + profitPerTap <= storage) {
-          balance += profitPerTap;
-
-          const profitEl = document.createElement("div");
-          profitEl.className = "flying-profit";
-          profitEl.textContent = `+${profitPerTap}`;
-          profitEl.style.left = `${Math.random() * 80 + 10}%`;
-          profitEl.style.top = `${coinButton.offsetTop}px`;
-
-          document.body.appendChild(profitEl);
-
-          setTimeout(() => {
-            profitEl.remove();
-          }, 1000);
-
-          updateDisplay();
-        }
-      });
-
-      setTimeout(() => {
-        document.getElementById("loadingOverlay").style.display = "none";
-      }, 1000);
-
-      updateDisplay();
+    menuToggle.addEventListener('click', () => {
+      dropdownMenu.style.display = (dropdownMenu.style.display === 'block') ? 'none' : 'block';
     });
+
+    // Load username from localStorage or Firebase
+    const username = localStorage.getItem("username") || "Guest";
+    document.getElementById("usernameDisplay").innerText = "👤 " + username;
+
+    // Logout function
+    function logout() {
+      localStorage.clear(); // clear all user state
+      alert("Logged out successfully!");
+      window.location.href = "index.html"; // redirect to login
+    }
   </script>
 </body>
 </html>
