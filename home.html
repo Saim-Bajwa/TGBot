@@ -18,9 +18,10 @@
     }
 
     .header {
+      position: relative;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       color: white;
       height: 50px;
       border: 2px solid white;
@@ -28,7 +29,6 @@
       margin: 20px;
       padding: 0 20px;
       font-size: 10px;
-      position: relative;
     }
 
     .header img {
@@ -38,21 +38,18 @@
 
     .header h1 {
       margin-left: 10px;
-      flex-grow: 1;
-      text-align: center;
     }
 
     #menuToggle {
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 4px;
       position: absolute;
       right: 15px;
       top: 50%;
       transform: translateY(-50%);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
     }
 
     #menuToggle div {
@@ -280,13 +277,10 @@
     }
 
     .flying-profit,
-    .flying-image {
-      user-select: none;
-      pointer-events: none;
-    }
-
+    .flying-image,
     .coin-button img {
       user-select: none;
+      pointer-events: none;
       -webkit-user-drag: none;
     }
   </style>
@@ -338,6 +332,8 @@
     <a class="bb" href="about.html"><img src="about.ico" alt="About">About</a>
     <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends">Friends</a>
   </div>
+
+
 
 
 <script type="module">
