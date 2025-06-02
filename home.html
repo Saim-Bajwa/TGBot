@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,22 +41,24 @@
       padding: 20px;
       border: 2px solid white;
       border-radius: 20px;
+      height: 100%;
       width: 90%;
-      color: white;
       text-align: center;
+      color: white;
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      justify-content: space-between;
     }
 
     #balance {
       font-size: 30px;
-      font-weight: 700;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
       color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 700;
     }
 
     #balance img {
@@ -70,14 +72,15 @@
       border-radius: 50%;
       background-color: #454444;
       border: 10px solid white;
-      margin: 0 auto;
+      margin: 20px auto;
+      cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
       transition: transform 0.1s, box-shadow 0.1s;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .coin-button:active {
@@ -89,8 +92,6 @@
       height: 60px;
       width: 60px;
       background: none;
-      user-select: none;
-      -webkit-user-drag: none;
     }
 
     .coin-button.disabled {
@@ -99,10 +100,11 @@
     }
 
     .tubes {
+      margin-top: 15px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin: 15px 0 10px;
+      margin-bottom: 10px;
     }
 
     .tube {
@@ -122,16 +124,15 @@
     #footer {
       position: fixed;
       bottom: 0;
-      left: 0;
-      right: 0;
-      margin: 20px;
-      padding: 10px;
-      background-color: black;
-      border: 2px solid white;
-      border-radius: 10px;
+      width: calc(100% - 40px);
       display: flex;
       justify-content: space-around;
       align-items: center;
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 20px;
     }
 
     .bb {
@@ -140,6 +141,7 @@
       align-items: center;
       text-decoration: none;
       color: white;
+      cursor: pointer;
       font-size: 0.7rem;
     }
 
@@ -149,19 +151,19 @@
       margin-bottom: 5px;
     }
 
-    .flying-profit,
+    .flying-profit {
+      position: absolute;
+      font-size: 16px;
+      font-weight: 900;
+      color: white;
+      animation: flyUp 1s ease-out forwards;
+      background: none;
+    }
+
     .flying-image {
       position: absolute;
       animation: flyUp 1s ease-out forwards;
       background: none;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    .flying-profit {
-      font-size: 16px;
-      font-weight: 900;
-      color: white;
     }
 
     @keyframes flyUp {
@@ -179,10 +181,10 @@
       position: fixed;
       top: 0;
       left: 0;
-      height: 100%;
       width: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      height: 100%;
       backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.6);
       z-index: 9999;
       display: flex;
       justify-content: center;
@@ -213,10 +215,20 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    .flying-profit,
+    .flying-image {
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .coin-button img {
+      user-select: none;
+      -webkit-user-drag: none;
+    }
   </style>
 </head>
 <body>
-
   <div id="loadingOverlay">
     <div class="loadingBox">
       <div class="spinner"></div>
@@ -226,15 +238,14 @@
   <header class="header">
     <img src="img.ico" alt="Logo">
     <h1>TROLL FACE TOKEN</h1>
-  </header>
-
-  <div id="dropdownMenu" class="dropdown-content">
-    <div id="usernameDisplay" class="username">👤 Loading...</div>
-    <div class="logout" onclick="logout()">
-      <img src="logout.ico" alt="Logout Icon">
-      <span>Logout</span>
+    <div id="dropdownMenu" class="dropdown-content">
+      <div id="usernameDisplay" class="username">👤 Loading...</div>
+      <div class="logout" onclick="logout()">
+        <img src="logout.ico" alt="Logout Icon">
+        <span>Logout</span>
+      </div>
     </div>
-  </div>
+  </header>
 
   <div class="container">
     <div id="balance">
@@ -247,8 +258,8 @@
     </button>
 
     <div class="tubes">
-      <div class="tube" id="profit-tube">Profit per tap:</div>
-      <div class="tube" id="storage-tube">Storage:</div>
+      <div class="tube" id="profit-tube">Profit per tap: 0</div>
+      <div class="tube" id="storage-tube">Storage: 0</div>
     </div>
   </div>
 
@@ -259,168 +270,49 @@
     <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends">Friends</a>
   </div>
 
-  <!-- Firebase SDKs -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const coinButton = document.getElementById("coinButton");
+      const balDisplay = document.getElementById("bal");
+      const profitTube = document.getElementById("profit-tube");
+      const storageTube = document.getElementById("storage-tube");
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
-    authDomain: "tg-bot-user.firebaseapp.com",
-    databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "tg-bot-user",
-    storageBucket: "tg-bot-user.appspot.com",
-    messagingSenderId: "282564900786",
-    appId: "1:282564900786:web:ff271e609718d5afd056ab",
-    measurementId: "G-R45WHCZ3KZ"
-  };
+      let balance = 0;
+      let profitPerTap = 1;
+      let storage = 100;
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const auth = getAuth(app);
+      function updateDisplay() {
+        balDisplay.textContent = balance;
+        profitTube.textContent = `Profit per tap: ${profitPerTap}`;
+        storageTube.textContent = `Storage: ${storage}`;
+      }
 
-  const balanceDisplay = document.getElementById("bal");
-  const storageTube = document.getElementById("storage-tube");
-  const coinButton = document.getElementById("coinButton");
-  const container = document.querySelector(".container");
-  const profitTube = document.getElementById("profit-tube");
-  const loadingOverlay = document.getElementById("loadingOverlay");
-  const menuButton = document.querySelector(".dropbtn");
-  const dropdown = document.getElementById("dropdownMenu");
-  const usernameDisplay = document.getElementById("usernameDisplay");
+      coinButton.addEventListener("click", () => {
+        if (balance + profitPerTap <= storage) {
+          balance += profitPerTap;
 
-  let balance = 0;
-  let profitPerTap = 1;
-  let storage = 3000;
-  let maxStorage = 3000;
-  let userId = null;
+          const profitEl = document.createElement("div");
+          profitEl.className = "flying-profit";
+          profitEl.textContent = `+${profitPerTap}`;
+          profitEl.style.left = `${Math.random() * 80 + 10}%`;
+          profitEl.style.top = `${coinButton.offsetTop}px`;
 
-  menuButton.addEventListener("click", () => {
-    dropdown.classList.toggle("show");
-  });
+          document.body.appendChild(profitEl);
 
-  document.addEventListener("click", (event) => {
-    if (!event.target.closest(".dropdown") && !event.target.closest("#dropdownMenu")) {
-      dropdown.classList.remove("show");
-    }
-  });
+          setTimeout(() => {
+            profitEl.remove();
+          }, 1000);
 
-  function updateUI() {
-    balanceDisplay.textContent = balance;
-    storageTube.textContent = `Storage: ${storage}/${maxStorage}`;
-    profitTube.textContent = `Profit per tap: ${profitPerTap}`;
-  }
-
-  function toggleCoinButton() {
-    const disabled = storage <= 0;
-    coinButton.disabled = disabled;
-    coinButton.classList.toggle("disabled", disabled);
-  }
-
-  function createFlyingElement(text, x, y) {
-    const element = document.createElement("div");
-    element.textContent = text;
-    element.className = "flying-profit";
-    element.style.left = `${x}px`;
-    element.style.top = `${y}px`;
-    container.appendChild(element);
-    setTimeout(() => container.removeChild(element), 1000);
-  }
-
-  function createFlyingImage(x, y) {
-    const img = document.createElement("img");
-    img.src = "img.ico";
-    img.className = "flying-image";
-    img.style.left = `${x}px`;
-    img.style.top = `${y}px`;
-    img.style.height = "20px";
-    img.style.width = "20px";
-    container.appendChild(img);
-    setTimeout(() => container.removeChild(img), 1000);
-  }
-
-  window.logout = function () {
-    localStorage.clear();
-    signOut(auth)
-      .then(() => {
-        window.location.href = "index.html";
-      })
-      .catch((error) => {
-        console.error("Logout error:", error);
-        alert("Failed to logout.");
-      });
-  };
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = "login.html";
-      return;
-    }
-
-    userId = user.uid;
-    const userRef = ref(db, `users/${userId}`);
-    const balanceRef = ref(db, `users/${userId}/balance`);
-    const profitRef = ref(db, `users/${userId}/profitPerTap`);
-    const storageRef = ref(db, `users/${userId}/storage`);
-    const maxStorageRef = ref(db, `users/${userId}/maxStorage`);
-    const usernameRef = ref(db, `users/${userId}/username`);
-
-    try {
-      const [balSnap, profitSnap, storageSnap, maxSnap, nameSnap] = await Promise.all([
-        get(balanceRef),
-        get(profitRef),
-        get(storageRef),
-        get(maxStorageRef),
-        get(usernameRef),
-      ]);
-
-      balance = balSnap.exists() ? balSnap.val() : 0;
-      profitPerTap = profitSnap.exists() ? profitSnap.val() : 1;
-      storage = storageSnap.exists() ? storageSnap.val() : 0;
-      maxStorage = maxSnap.exists() ? maxSnap.val() : 100;
-      usernameDisplay.innerText = nameSnap.exists() ? `👤 ${nameSnap.val()}` : "👤 Unknown User";
-
-      updateUI();
-      toggleCoinButton();
-      loadingOverlay.style.display = "none";
-
-      setInterval(() => {
-        if (storage < maxStorage) {
-          storage = Math.min(storage + profitPerTap, maxStorage);
-          set(storageRef, storage);
-          updateUI();
-          toggleCoinButton();
+          updateDisplay();
         }
+      });
+
+      setTimeout(() => {
+        document.getElementById("loadingOverlay").style.display = "none";
       }, 1000);
 
-      coinButton.addEventListener("click", (e) => {
-        if (storage >= profitPerTap) {
-          balance += profitPerTap;
-          storage -= profitPerTap;
-
-          updateUI();
-          toggleCoinButton();
-
-          update(userRef, { balance, storage }).catch(console.error);
-
-          const rect = coinButton.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          createFlyingElement(`+${profitPerTap}`, x + rect.left - 68, y + rect.top);
-          createFlyingImage(x + rect.left - 30, y + rect.top + 2);
-        }
-      });
-    } catch (err) {
-      console.error("Error loading user data:", err);
-      alert("Failed to load user data.");
-    }
-  });
-</script>
-
-
-
-
+      updateDisplay();
+    });
+  </script>
 </body>
 </html>
