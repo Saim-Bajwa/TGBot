@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login with Email</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,50 +28,106 @@
     }
     .header img { width: 30px; height: 30px; }
     .header h1 { font-size: 1.5rem; }
+
     .container {
       border: 2px solid white;
       border-radius: 20px;
-      padding: 40px;
+      padding: 30px 20px;
       text-align: center;
       width: 100%;
       max-width: 400px;
     }
+
+    .toggle-container {
+      display: flex;
+      border: 2px solid white;
+      border-radius: 25px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 10px;
+      cursor: pointer;
+      border: none;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .toggle-btn.active {
+      background-color: black;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .toggle-btn.inactive {
+      background-color: white;
+      color: black;
+      border: 2px solid black;
+    }
+
     input, button {
       padding: 10px;
       font-size: 1rem;
       margin: 10px 0;
-      border-radius: 10px;
-      border: none;
+      border-radius: 20px;
+      border: 2px solid white;
+      background-color: black;
+      color: white;
       width: 100%;
     }
+
     button {
-      background-color: white;
-      color: black;
+      font-weight: bold;
       cursor: pointer;
       transition: background 0.3s;
     }
+
     button:hover {
-      background-color: #ccc;
+      background-color: #222;
+    }
+
+    .form {
+      display: none;
+      flex-direction: column;
+    }
+
+    .form.active {
+      display: flex;
     }
   </style>
-  <script>
-    const storedUid = localStorage.getItem("uid");
-    if (storedUid) {
-      // Skip redirect here; only allow verified login
-    }
-  </script>
 </head>
 <body>
   <div class="header">
     <img src="img.ico" alt="Logo" />
     <h1>TROLL FACE TOKEN</h1>
   </div>
+
   <div class="container">
     <h2>Login to Your Game Account</h2>
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button onclick="signUp()">Sign Up</button>
-    <button onclick="signIn()">Sign In</button>
+
+    <div class="toggle-container">
+      <button id="loginToggle" class="toggle-btn active" onclick="switchForm('login')">Login</button>
+      <button id="signupToggle" class="toggle-btn inactive" onclick="switchForm('signup')">Sign Up</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="form active">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button onclick="signIn()">Login</button>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div id="signupForm" class="form">
+      <input type="email" id="signupEmail" placeholder="Email" required />
+      <input type="text" id="signupUsername" placeholder="Username" required />
+      <input type="password" id="signupPassword" placeholder="Password" required />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+      <button onclick="signUp()">Sign Up</button>
+    </div>
   </div>
 
   <!-- Firebase SDKs -->
@@ -95,21 +151,51 @@
     const auth = firebase.auth();
     const database = firebase.database();
 
+    function switchForm(type) {
+      const loginForm = document.getElementById("loginForm");
+      const signupForm = document.getElementById("signupForm");
+      const loginToggle = document.getElementById("loginToggle");
+      const signupToggle = document.getElementById("signupToggle");
+
+      if (type === 'login') {
+        loginForm.classList.add("active");
+        signupForm.classList.remove("active");
+        loginToggle.classList.add("active");
+        loginToggle.classList.remove("inactive");
+        signupToggle.classList.remove("active");
+        signupToggle.classList.add("inactive");
+      } else {
+        signupForm.classList.add("active");
+        loginForm.classList.remove("active");
+        signupToggle.classList.add("active");
+        signupToggle.classList.remove("inactive");
+        loginToggle.classList.remove("active");
+        loginToggle.classList.add("inactive");
+      }
+    }
+
     function signUp() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const email = document.getElementById("signupEmail").value;
+      const username = document.getElementById("signupUsername").value;
+      const password = document.getElementById("signupPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
 
       auth.createUserWithEmailAndPassword(email, password)
         .then(result => {
           const user = result.user;
           user.sendEmailVerification().then(() => {
-            alert("A verification email has been sent. Please check your inbox and verify your email before logging in.");
+            alert("Verification email sent. Please verify before logging in.");
 
             const userRef = database.ref("users/" + user.uid);
             userRef.once("value").then(snapshot => {
               if (!snapshot.exists()) {
                 userRef.set({
-                  username: email.split("@")[0],
+                  username: username,
                   email: email,
                   balance: 100,
                   profitPerTap: 8,
@@ -129,8 +215,8 @@
     }
 
     function signIn() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
 
       auth.signInWithEmailAndPassword(email, password)
         .then(result => {
