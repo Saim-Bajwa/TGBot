@@ -20,31 +20,39 @@
     .header {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       color: white;
       height: 50px;
       border: 2px solid white;
       border-radius: 20px;
       margin: 20px;
       padding: 0 20px;
-      gap: 10px;
       font-size: 10px;
+      position: relative;
     }
 
     .header img {
       height: 30px;
       width: 30px;
     }
-        #menuToggle {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
+
+    .header h1 {
+      margin-left: 10px;
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    #menuToggle {
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-items: center;
       gap: 4px;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     #menuToggle div {
@@ -90,6 +98,7 @@
       height: 16px;
       width: 16px;
     }
+
     .container {
       margin: 20px auto;
       padding: 20px;
@@ -231,7 +240,6 @@
       }
     }
 
-    /* Loading Overlay */
     #loadingOverlay {
       position: fixed;
       top: 0;
@@ -270,18 +278,17 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* Prevent selection of flying profit and flying images */
-.flying-profit,
-.flying-image {
-  user-select: none;
-  pointer-events: none;
-}
 
-/* Prevent selection of the coin image */
-.coin-button img {
-  user-select: none;
-  -webkit-user-drag: none;
-}
+    .flying-profit,
+    .flying-image {
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .coin-button img {
+      user-select: none;
+      -webkit-user-drag: none;
+    }
   </style>
 </head>
 <body>
@@ -331,6 +338,8 @@
     <a class="bb" href="about.html"><img src="about.ico" alt="About">About</a>
     <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends">Friends</a>
   </div>
+
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
