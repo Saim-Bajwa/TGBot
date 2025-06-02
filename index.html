@@ -39,14 +39,9 @@
     }
 
     .toggle-container {
-      display:flex;
-      border: 2px solid white;
-      border-radius: 25px;
+      display: flex;
       overflow: hidden;
-      margin-top:20px;
-      padding-top:0px;
-      padding-bottom:0px;
-      
+      margin: 20px 0;
     }
 
     .toggle-btn {
@@ -111,7 +106,7 @@
   <div class="container">
     <h2>Login to Your Game Account</h2>
 
-
+    <div class="toggle-container">
       <button id="loginToggle" class="toggle-btn active" onclick="switchForm('login')">Login</button>
       <button id="signupToggle" class="toggle-btn inactive" onclick="switchForm('signup')">Sign Up</button>
     </div>
@@ -131,7 +126,7 @@
       <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
       <button onclick="signUp()">Sign Up</button>
     </div>
-  
+  </div>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
