@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,24 +41,22 @@
       padding: 20px;
       border: 2px solid white;
       border-radius: 20px;
-      height: 100%;
       width: 90%;
-      text-align: center;
       color: white;
-      position: relative;
+      text-align: center;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      gap: 20px;
     }
 
     #balance {
       font-size: 30px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
       font-weight: 700;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      color: white;
     }
 
     #balance img {
@@ -72,15 +70,14 @@
       border-radius: 50%;
       background-color: #454444;
       border: 10px solid white;
-      margin: 20px auto;
-      cursor: pointer;
+      margin: 0 auto;
       display: flex;
       justify-content: center;
       align-items: center;
+      cursor: pointer;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
       transition: transform 0.1s, box-shadow 0.1s;
       user-select: none;
-      -webkit-tap-highlight-color: transparent;
     }
 
     .coin-button:active {
@@ -92,6 +89,8 @@
       height: 60px;
       width: 60px;
       background: none;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     .coin-button.disabled {
@@ -100,11 +99,10 @@
     }
 
     .tubes {
-      margin-top: 15px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-bottom: 10px;
+      margin: 15px 0 10px;
     }
 
     .tube {
@@ -124,15 +122,16 @@
     #footer {
       position: fixed;
       bottom: 0;
-      width: calc(100% - 40px);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
+      left: 0;
+      right: 0;
+      margin: 20px;
+      padding: 10px;
       background-color: black;
       border: 2px solid white;
       border-radius: 10px;
-      padding: 10px;
-      margin: 20px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
     }
 
     .bb {
@@ -141,7 +140,6 @@
       align-items: center;
       text-decoration: none;
       color: white;
-      cursor: pointer;
       font-size: 0.7rem;
     }
 
@@ -151,19 +149,19 @@
       margin-bottom: 5px;
     }
 
-    .flying-profit {
-      position: absolute;
-      font-size: 16px;
-      font-weight: 900;
-      color: white;
-      animation: flyUp 1s ease-out forwards;
-      background: none;
-    }
-
+    .flying-profit,
     .flying-image {
       position: absolute;
       animation: flyUp 1s ease-out forwards;
       background: none;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .flying-profit {
+      font-size: 16px;
+      font-weight: 900;
+      color: white;
     }
 
     @keyframes flyUp {
@@ -177,15 +175,14 @@
       }
     }
 
-    /* Loading Overlay */
     #loadingOverlay {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
       height: 100%;
-      backdrop-filter: blur(10px);
+      width: 100%;
       background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
       z-index: 9999;
       display: flex;
       justify-content: center;
@@ -216,21 +213,10 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* Prevent selection of flying profit and flying images */
-.flying-profit,
-.flying-image {
-  user-select: none;
-  pointer-events: none;
-}
-
-/* Prevent selection of the coin image */
-.coin-button img {
-  user-select: none;
-  -webkit-user-drag: none;
-}
   </style>
 </head>
 <body>
+
   <div id="loadingOverlay">
     <div class="loadingBox">
       <div class="spinner"></div>
@@ -240,20 +226,20 @@
   <header class="header">
     <img src="img.ico" alt="Logo">
     <h1>TROLL FACE TOKEN</h1>
-    <div id="dropdownMenu" class="dropdown-content">
-  <div id="usernameDisplay" class="username">👤 Loading...</div>
-
-  <div class="logout" onclick="logout()">
-    <img src="logout.ico" alt="Logout Icon">
-    <span>Logout</span>
-  </div>
-</div>
   </header>
+
+  <div id="dropdownMenu" class="dropdown-content">
+    <div id="usernameDisplay" class="username">👤 Loading...</div>
+    <div class="logout" onclick="logout()">
+      <img src="logout.ico" alt="Logout Icon">
+      <span>Logout</span>
+    </div>
+  </div>
 
   <div class="container">
     <div id="balance">
       <img src="img.ico" alt="Points Icon">
-      <span id="bal"></span>
+      <span id="bal">0</span>
     </div>
 
     <button class="coin-button" id="coinButton">
@@ -261,7 +247,7 @@
     </button>
 
     <div class="tubes">
-      <div class="tube" id="profit-tube">Profit per tap: </div>
+      <div class="tube" id="profit-tube">Profit per tap:</div>
       <div class="tube" id="storage-tube">Storage:</div>
     </div>
   </div>
