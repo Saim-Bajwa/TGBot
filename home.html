@@ -326,6 +326,13 @@
       <div class="tube" id="storage-tube">Storage:</div>
     </div>
   </div>
+  <div class="tube" style="justify-content: space-between; background-color: black; border: 2px solid white; color: white; border-radius: 15px; padding: 5px 10px;">
+  <div style="display: flex; align-items: center;">
+    <img src="ad.ico" alt="Ad Icon" style="height: 20px; width: 20px; margin-right: 8px;">
+    <span>Watch Ad to Earn +500</span>
+  </div>
+  <button id="watchAdBtn" style="padding: 5px 10px; background-color: white; color: black; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">Play Ad</button>
+</div>
 
   <div id="footer">
     <a class="bb" href="home.html"><img src="home.ico" alt="Home">Home</a>
@@ -366,6 +373,7 @@
   const menuToggle = document.getElementById('menuToggle');
   const dropdownMenu = document.getElementById('dropdownMenu');
   const usernameDisplay = document.getElementById("usernameDisplay");
+  const watchAdBtn = document.getElementById("watchAdBtn");
 
   menuToggle.addEventListener('click', () => {
     dropdownMenu.style.display = (dropdownMenu.style.display === 'block') ? 'none' : 'block';
@@ -452,6 +460,26 @@
           createFlyingImage(x + rect.left - 30, y + rect.top + 2);
         }
       });
+
+      if (watchAdBtn) {
+        watchAdBtn.addEventListener("click", async () => {
+          try {
+            const adCompleted = await playAdsgramAd();
+            if (adCompleted) {
+              balance += 500;
+              update(ref(db, `users/${userId}`), { balance });
+              updateUI();
+              alert("+500 balance added!");
+            } else {
+              alert("Ad not completed.");
+            }
+          } catch (err) {
+            console.error("Ad error:", err);
+            alert("Error playing ad.");
+          }
+        });
+      }
+
     } else {
       window.location.href = "index.html";
     }
@@ -477,6 +505,16 @@
     img.style.width = "20px";
     container.appendChild(img);
     setTimeout(() => container.removeChild(img), 1000);
+  }
+
+  // Simulate ad integration - replace this function with actual Adsgram SDK code
+  async function playAdsgramAd() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const confirmed = confirm("Simulated ad: Press OK to simulate successful ad watch.");
+        resolve(confirmed);
+      }, 1000);
+    });
   }
 </script>
 
