@@ -104,109 +104,121 @@
   </div>
 
   <script>
-    // User data (simulate user data object)
-    let user = {
-      balance: 10000,
-      profitPerTapLevel: 1,
-      profitPerTap: 1,
-      storageLevel: 1,
-      maxStorage: 500,
-    };
+  // User data (simulate user data object)
+  let user = {
+    balance: 10000,
+    profitPerTapLevel: 1,
+    profitPerTap: 1,
+    storageLevel: 1,
+    maxStorage: 500,
+  };
 
-    // Cost calculation functions
-    function getProfitCost(level) {
-      return 1000 + (level - 1) * 2000;
-    }
-    function getStorageCost(level) {
-      return 1000 + (level - 1) * 3000;
-    }
+  // Cost calculation functions
+  function getProfitCost(level) {
+    return 1000 + (level - 1) * 2000;
+  }
+  function getStorageCost(level) {
+    return 1000 + (level - 1) * 3000;
+  }
 
-    // UI elements
-    const elements = {
-      profitTapCost: document.getElementById('profitTapCost'),
-      storageCost: document.getElementById('storageCost'),
-      profitTapLevel: document.getElementById('profitTapLevel'),
-      storageLevel: document.getElementById('storageLevel'),
-      profitTapButton: document.getElementById('profitTapButton'),
-      storageButton: document.getElementById('storageButton'),
-      adButton: document.getElementById('adButton'),
-    };
+  // UI elements
+  const elements = {
+    profitTapCost: document.getElementById('profitTapCost'),
+    storageCost: document.getElementById('storageCost'),
+    profitTapLevel: document.getElementById('profitTapLevel'),
+    storageLevel: document.getElementById('storageLevel'),
+    profitTapButton: document.getElementById('profitTapButton'),
+    storageButton: document.getElementById('storageButton'),
+    adButton: document.getElementById('adButton'),
+  };
 
-    // Update UI function
-    function updateUI() {
-      const profitCost = getProfitCost(user.profitPerTapLevel);
-      const storageCost = getStorageCost(user.storageLevel);
+  // Update UI function
+  function updateUI() {
+    const profitCost = getProfitCost(user.profitPerTapLevel);
+    const storageCost = getStorageCost(user.storageLevel);
 
-      elements.profitTapCost.textContent = `Cost: ${profitCost}`;
-      elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
-      elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
-      elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
+    elements.profitTapCost.textContent = `Cost: ${profitCost}`;
+    elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
+    elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
+    elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
 
-      elements.profitTapButton.disabled = user.balance < profitCost;
-      elements.storageButton.disabled = user.balance < storageCost || user.storageLevel >= 5;
+    elements.profitTapButton.disabled = user.balance < profitCost;
+    elements.storageButton.disabled = user.balance < storageCost || user.storageLevel >= 5;
 
-      elements.profitTapButton.classList.toggle("disabled", user.balance < profitCost);
-      elements.storageButton.classList.toggle("disabled", user.balance < storageCost || user.storageLevel >= 5);
-    }
+    elements.profitTapButton.classList.toggle("disabled", user.balance < profitCost);
+    elements.storageButton.classList.toggle("disabled", user.balance < storageCost || user.storageLevel >= 5);
+  }
 
-    // Simulated save function (replace with your Firebase or backend save logic)
-    function save() {
-      console.log("User data saved", user);
-      // Example: firebase.database().ref("users/" + userId).set(user)
-    }
+  // Simulated save function (replace with your Firebase or backend save logic)
+  function save() {
+    console.log("User data saved", user);
+    // Example: firebase.database().ref("users/" + userId).set(user)
+  }
 
-    // AdsGram rewarded ads integration
-    let AdController;
-    window.addEventListener('load', () => {
-      // Replace 'YOUR_BLOCK_ID' with your actual AdsGram blockId for rewarded ads
+  // AdsGram rewarded ads integration with safe environment checking
+  let AdController;
+  window.addEventListener('load', () => {
+    if (window.Adsgram && typeof window.Adsgram.init === 'function') {
+      // Replace '11592' with your actual AdsGram blockId for rewarded ads
       AdController = window.Adsgram.init({ blockId: '11592' });
-    });
-
-    // Function to open and show rewarded ad
-    function openRewardAd() {
-      if (AdController) {
-        AdController.show().then(() => {
-          // User watched the ad fully, reward balance
-          user.balance += 500;
-          updateUI();
-          save();
-          alert("+500 balance added!");
-        }).catch((error) => {
-          console.error("Ad error:", error);
-          alert("Ad failed to play or was skipped.");
-        });
-      } else {
-        alert("Ad system not initialized yet. Please try again in a moment.");
-      }
+    } else {
+      console.warn("Adsgram SDK not loaded or Adsgram.init not available");
     }
+  });
 
-    // Button event listeners
-    elements.profitTapButton.addEventListener("click", () => {
-      const cost = getProfitCost(user.profitPerTapLevel);
-      if (user.balance >= cost) {
-        user.balance -= cost;
-        user.profitPerTapLevel++;
-        user.profitPerTap += 1;
+  // Function to open and show rewarded ad with safety checks
+  function openRewardAd() {
+    if (AdController && typeof AdController.show === 'function') {
+      AdController.show().then(() => {
+        // User watched the ad fully, reward balance
+        user.balance += 500;
         updateUI();
         save();
-      }
-    });
+        alert("+500 balance added!");
+      }).catch((error) => {
+        console.error("Ad error:", error);
+        alert("Ad failed to play or was skipped.");
+      });
+    } else {
+      alert("Ad system not initialized yet. Please try again in a moment.");
+    }
+  }
 
-    elements.storageButton.addEventListener("click", () => {
-      const cost = getStorageCost(user.storageLevel);
-      if (user.balance >= cost && user.storageLevel < 5) {
-        user.balance -= cost;
-        user.storageLevel++;
-        user.maxStorage += 500;
-        updateUI();
-        save();
-      }
-    });
+  // Optional: Telegram WebApp safe initialization (if you use Telegram SDK)
+  if (window.Telegram && window.Telegram.WebApp) {
+    Telegram.WebApp.ready();
+  } else {
+    console.log("Not inside Telegram WebApp or Telegram SDK not loaded");
+  }
 
-    elements.adButton.addEventListener("click", openRewardAd);
+  // Button event listeners
+  elements.profitTapButton.addEventListener("click", () => {
+    const cost = getProfitCost(user.profitPerTapLevel);
+    if (user.balance >= cost) {
+      user.balance -= cost;
+      user.profitPerTapLevel++;
+      user.profitPerTap += 1;
+      updateUI();
+      save();
+    }
+  });
 
-    // Initialize UI on load
-    updateUI();
-  </script>
+  elements.storageButton.addEventListener("click", () => {
+    const cost = getStorageCost(user.storageLevel);
+    if (user.balance >= cost && user.storageLevel < 5) {
+      user.balance -= cost;
+      user.storageLevel++;
+      user.maxStorage += 500;
+      updateUI();
+      save();
+    }
+  });
+
+  elements.adButton.addEventListener("click", openRewardAd);
+
+  // Initialize UI on load
+  updateUI();
+</script>
+
 </body>
 </html>
