@@ -1,416 +1,277 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <title>UPGRADES</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            background-color: black;
-        }
-        body {
-            font-family: Arial, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; background-color: black; }
+        body { font-family: Arial, sans-serif; }
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            height: 50px;
-            border: 2px solid white;
-            border-radius: 20px;
-            margin: 20px;
-            padding: 0 20px;
-            gap: 10px;
-            font-size: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; height: 50px; border: 2px solid white;
+            border-radius: 20px; margin: 20px; padding: 0 20px;
+            gap: 10px; font-size: 10px;
         }
-        .header img {
-            height: 30px;
-            width: 30px;
-        }
+        .header img { height: 30px; width: 30px; }
         .container {
-            margin: 20px auto;
-            padding: 20px;
-            border: 2px solid white;
-            border-radius: 20px;
-            height: 450px;
-            width: 90%;
-            text-align: center;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            margin: 20px auto; padding: 20px; border: 2px solid white;
+            border-radius: 20px; height: 450px; width: 90%;
+            text-align: center; color: white; display: flex;
+            flex-direction: column; gap: 20px;
         }
         .tube {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #cfcfc4;
-            border-radius: 10px;
-            padding: 5px 10px;
-            color: white;
-            height: 100px;
-            width: 90%;
-            margin: 0 auto;
-            position: relative;
-            border: 3px solid white;
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: #cfcfc4; border-radius: 10px; padding: 5px 10px;
+            color: white; height: 100px; width: 90%; margin: 0 auto; position: relative; border: 3px solid white;
         }
         .tube .upgrade-level {
-            position: absolute;
-            bottom: 0px;
-            left: 0px;
-            font-size: 12px;
-            color: white;
-            border-radius: 5px;
-            border: 2px solid white;
-            padding: 2px;
-            background-color: #808080;
+            position: absolute; bottom: 0px; left: 0px; font-size: 12px;
+            color: white; border-radius: 5px; border: 2px solid white; padding: 2px; backround-color: #808080;
         }
         .tube button {
-            height: 40px;
-            width: 80px;
-            background-color: #454444;
-            border: none;
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .tube button:hover:not(.disabled) {
-            background-color: #6b6b6b;
+            height: 40px; width: 80px; background-color: #454444;
+            border: none; border-radius: 10px; color: white; cursor: pointer;
         }
         .tube button.disabled {
-            background-color: gray;
-            cursor: not-allowed;
+            background-color: gray; cursor: not-allowed;
         }
         #footer {
-            position: fixed;
-            bottom: 0;
-            width: calc(100% - 40px);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background-color: black;
-            border: 2px solid white;
-            border-radius: 10px;
-            padding: 10px;
-            margin: 20px;
-            z-index: 10000;
+            position: fixed; bottom: 0; width: calc(100% - 40px);
+            display: flex; justify-content: space-around; align-items: center;
+            background-color: black; border: 2px solid white; border-radius: 10px;
+            padding: 10px; margin: 20px;
         }
-        .bb {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: white;
-            cursor: pointer;
-            font-size: 0.7rem;
+    .bb {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .bb img {
+      height: 40px;
+      width: 40px;
+      margin-bottom: 5px;
+    }
+        .lm, .nm {
+            color: black; background-color: white; border: 2px solid white;
+            border-radius: 10px; margin: 5px; font-size: 10px;
+            height: 50px; width: 70px; align-items: center;
+            justify-content: center; padding-top: 5px; border: 1px solid #cfcfc4;
         }
-        .bb img {
-            height: 40px;
-            width: 40px;
-            margin-bottom: 5px;
-        }
-        .lm,
-        .nm {
-            color: black;
-            background-color: white;
-            border: 2px solid white;
-            border-radius: 10px;
-            margin: 5px;
-            font-size: 10px;
-            height: 50px;
-            width: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-top: 5px;
-        }
-        #loadingOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(10px);
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .loadingBox {
-            width: 100px;
-            height: 100px;
-            background-color: black;
-            border: 2px solid white;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .spinner {
-            border: 6px solid white;
-            border-top: 4px solid transparent;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        /* Ad bar style */
-        .ad-bar {
-            background-color: black;
-            color: white;
-            border: 2px solid white;
-            border-radius: 15px;
-            height: 60px;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 90%;
-            margin: 10px auto;
-        }
-        .ad-bar div {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-        .ad-bar button {
-            padding: 5px 12px;
-            background-color: white;
-            color: black;
-            border-radius: 10px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .ad-bar button:hover {
-            background-color: #ddd;
-        }
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loadingBox {
+      width: 100px;
+      height: 100px;
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      border: 6px solid white;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 <body>
-    <div id="loadingOverlay">
-        <div class="loadingBox">
-            <div class="spinner"></div>
-        </div>
+<div id="loadingOverlay">
+    <div class="loadingBox">
+      <div class="spinner"></div>
+    
     </div>
-    <header class="header">
-        <img src="img.ico" alt="Logo" />
-        <h1>UPGRADES</h1>
-    </header>
+</div>    
+<header class="header">
+    <img src="img.ico" alt="Logo">
+    <h1>UPGRADES</h1>
+</header>
 
-    <div class="container">
-        <div class="tube" id="profit-tap-tube">
-            <span class="lm">Profit Per Tap</span>
-            <span class="lm" id="profit-tap-cost">Cost: 20</span>
-            <button id="profitTapUpgrade">Upgrade</button>
-            <div class="upgrade-level" id="profit-tap-level">Level: 1</div>
-        </div>
-
-        <div class="tube" id="storage-tube">
-            <span class="nm">Max Storage</span>
-            <span class="nm" id="storage-cost">Cost: 1000</span>
-            <button id="storageUpgrade">Upgrade</button>
-            <div class="upgrade-level" id="storage-level">Level: 1</div>
-        </div>
+<div class="container">
+    <div class="tube" id="profit-tap-tube">
+        <span class="lm">Profit Per Tap</span>
+        <span class="lm" id="profit-tap-cost">Cost: 20</span>
+        <button id="profitTapUpgrade">Upgrade</button>
+        <div class="upgrade-level" id="profit-tap-level">Level: 1</div>
     </div>
 
-    <div class="ad-bar">
-        <div>
-            <img src="ad.ico" alt="Ad Icon" style="width: 24px; height: 24px;" />
-            <span>Watch Ad & Earn +500</span>
-        </div>
-        <button onclick="openRewardAd()">Play Ad</button>
+    <div class="tube" id="storage-tube">
+        <span class="nm">Max Storage</span>
+        <span class="nm" id="storage-cost">Cost: 1000</span>
+        <button id="storageUpgrade">Upgrade</button>
+        <div class="upgrade-level" id="storage-level">Level: 1</div>
     </div>
+</div>
 
-    <div id="footer">
-        <a class="bb" href="home.html"><img src="home.ico" alt="Home" />Home</a>
-        <a class="bb" href="upgrade.html"><img src="upgrades.ico" alt="Upgrades" />Upgrades</a>
-        <a class="bb" href="about.html"><img src="about.ico" alt="About" />About</a>
-        <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends" />Friends</a>
-    </div>
+<div id="footer">
+    <a class="bb" href="home.html"><img src="home.ico" alt="Home">Home</a>
+    <a class="bb" href="upgrade.html"><img src="upgrades.ico" alt="Upgrades">Upgrades</a>
+    <a class="bb" href="about.html"><img src="about.ico" alt="About">About</a>
+    <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends">Friends</a>
+</div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
-            authDomain: "tg-bot-user.firebaseapp.com",
-            databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "tg-bot-user",
-            storageBucket: "tg-bot-user.appspot.com",
-            messagingSenderId: "282564900786",
-            appId: "1:282564900786:web:ff271e609718d5afd056ab",
-        };
+<script>
+  // Your Firebase config object
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
+    authDomain: "tg-bot-user.firebaseapp.com",
+    databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "tg-bot-user",
+    storageBucket: "tg-bot-user.appspot.com",
+    messagingSenderId: "282564900786",
+    appId: "1:282564900786:web:ff271e609718d5afd056ab"
+  };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
 
-        // DOM elements
-        const elements = {
-            profitTapButton: document.getElementById("profitTapUpgrade"),
-            storageButton: document.getElementById("storageUpgrade"),
-            profitTapCost: document.getElementById("profit-tap-cost"),
-            storageCost: document.getElementById("storage-cost"),
-            profitTapLevel: document.getElementById("profit-tap-level"),
-            storageLevel: document.getElementById("storage-level"),
-        };
-        const loadingOverlay = document.getElementById("loadingOverlay");
+  // DOM elements
+  const elements = {
+    profitTapButton: document.getElementById("profitTapUpgrade"),
+    storageButton: document.getElementById("storageUpgrade"),
+    profitTapCost: document.getElementById("profit-tap-cost"),
+    storageCost: document.getElementById("storage-cost"),
+    profitTapLevel: document.getElementById("profit-tap-level"),
+    storageLevel: document.getElementById("storage-level")
+  };
+  const loadingOverlay = document.getElementById("loadingOverlay");
 
-        // Default user data
-        let user = {
-            balance: 0,
-            profitPerTap: 1,
-            maxStorage: 100,
-            profitPerTapLevel: 1,
-            storageLevel: 1,
-        };
+  // User data default values
+  let user = {
+    balance: 0,
+    profitPerTap: 1,
+    maxStorage: 100,
+    profitPerTapLevel: 1,
+    storageLevel: 1
+  };
 
-        let userId = null;
-        let userRef = null;
+  let userId = null;
+  let userRef = null;
 
-        // Calculate upgrade costs dynamically
-        function getProfitCost(level) {
-            return 20 * Math.pow(2, level - 1);
-        }
-        function getStorageCost(level) {
-            return 1000 + (level - 1) * 3000;
-        }
+  // Upgrade cost functions
+  function getProfitCost(level) {
+    return 20 * Math.pow(2, level - 1);
+  }
 
-        // Update UI to reflect user data
-        function updateUI() {
-            const profitCost = getProfitCost(user.profitPerTapLevel);
-            const storageCost = getStorageCost(user.storageLevel);
+  function getStorageCost(level) {
+    return 1000 + (level - 1) * 3000;
+  }
 
-            elements.profitTapCost.textContent = `Cost: ${profitCost}`;
-            elements.storageCost.textContent =
-                user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
-            elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
-            elements.storageLevel.textContent =
-                user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
+  // Update UI based on user data
+  function updateUI() {
+    const profitCost = getProfitCost(user.profitPerTapLevel);
+    const storageCost = getStorageCost(user.storageLevel);
 
-            elements.profitTapButton.disabled = user.balance < profitCost;
-            elements.storageButton.disabled =
-                user.balance < storageCost || user.storageLevel >= 5;
+    elements.profitTapCost.textContent = `Cost: ${profitCost}`;
+    elements.storageCost.textContent = user.storageLevel >= 5 ? "Max" : `Cost: ${storageCost}`;
+    elements.profitTapLevel.textContent = `Level: ${user.profitPerTapLevel}`;
+    elements.storageLevel.textContent = user.storageLevel >= 5 ? "Max" : `Level: ${user.storageLevel}`;
 
-            elements.profitTapButton.classList.toggle("disabled", user.balance < profitCost);
-            elements.storageButton.classList.toggle(
-                "disabled",
-                user.balance < storageCost || user.storageLevel >= 5
-            );
-        }
+    elements.profitTapButton.disabled = user.balance < profitCost;
+    elements.storageButton.disabled = user.balance < storageCost || user.storageLevel >= 5;
 
-        // Save user data to Firebase
-        function save() {
-            if (userRef) {
-                userRef.set(user).catch((err) => {
-                    console.error("Error saving user data:", err);
-                });
-            }
-        }
+    elements.profitTapButton.classList.toggle("disabled", user.balance < profitCost);
+    elements.storageButton.classList.toggle("disabled", user.balance < storageCost || user.storageLevel >= 5);
+  }
 
-        // Load user data from Firebase
-        function loadUserData() {
-            if (!userRef) return;
-            userRef
-                .once("value")
-                .then((snapshot) => {
-                    if (snapshot.exists()) {
-                        user = { ...user, ...snapshot.val() };
-                    } else {
-                        save(); // Save default data if none exists
-                    }
-                    updateUI();
-                    loadingOverlay.style.display = "none";
-                })
-                .catch((err) => {
-                    console.error("Error loading user data:", err);
-                });
-        }
+  // Save user data to Firebase
+  function save() {
+    if (userRef) {
+      userRef.set(user).catch(err => {
+        console.error("Error saving user data:", err);
+      });
+    }
+  }
 
-        // Listen for Firebase auth state changes
-        auth.onAuthStateChanged((currentUser) => {
-            if (currentUser) {
-                userId = currentUser.uid;
-                userRef = db.ref("users/" + userId);
-                loadUserData();
-            } else {
-                alert("Please log in to access your upgrades.");
-                loadingOverlay.style.display = "none";
-                // Optionally redirect to login page:
-                // window.location.href = "login.html";
-            }
-        });
+  // Load user data from Firebase
+  function loadUserData() {
+    if (!userRef) return;
 
-        // Upgrade buttons event listeners
-        elements.profitTapButton.addEventListener("click", () => {
-            const cost = getProfitCost(user.profitPerTapLevel);
-            if (user.balance >= cost) {
-                user.balance -= cost;
-                user.profitPerTapLevel++;
-                user.profitPerTap += 1;
-                updateUI();
-                save();
-            }
-        });
+    userRef.once("value").then(snapshot => {
+      if (snapshot.exists()) {
+        user = { ...user, ...snapshot.val() };
+      } else {
+        // Initialize with default if no data exists yet
+        save();
+      }
+      updateUI();
+      loadingOverlay.style.display = "none";
+    }).catch(err => {
+      console.error("Error loading user data:", err);
+    });
+  }
 
-        elements.storageButton.addEventListener("click", () => {
-            const cost = getStorageCost(user.storageLevel);
-            if (user.balance >= cost && user.storageLevel < 5) {
-                user.balance -= cost;
-                user.storageLevel++;
-                user.maxStorage += 500;
-                updateUI();
-                save();
-            }
-        });
+  // Listen for Firebase Authentication state changes
+  auth.onAuthStateChanged(currentUser => {
+    if (currentUser) {
+      userId = currentUser.uid;
+      userRef = db.ref("users/" + userId);
+      loadUserData();
+    } else {
+      alert("Please log in to access your upgrades.");
+      // Optional: redirect to login page or show login UI
+    }
+  });
 
-        // Open ad window and reward user on close
-        function openRewardAd() {
-            const adWindow = window.open(
-                "rewardad.html",
-                "ad",
-                "width=800,height=600,menubar=no,toolbar=no,location=no,status=no"
-            );
-            if (!adWindow) {
-                alert("Please allow popups to watch the ad.");
-                return;
-            }
-            const checkClosed = setInterval(() => {
-                if (adWindow.closed) {
-                    clearInterval(checkClosed);
-                    // Reward user +500 balance
-                    user.balance += 500;
-                    updateUI();
-                    save();
-                    alert("Thanks for watching! You earned +500.");
-                }
-            }, 500);
-        }
+  // Event listener for profit per tap upgrade button
+  elements.profitTapButton.addEventListener("click", () => {
+    const cost = getProfitCost(user.profitPerTapLevel);
+    if (user.balance >= cost) {
+      user.balance -= cost;
+      user.profitPerTapLevel++;
+      user.profitPerTap += 1;
+      updateUI();
+      save();
+    }
+  });
 
-        // Expose openRewardAd globally
-        window.openRewardAd = openRewardAd;
-    </script>
+  // Event listener for storage upgrade button
+  elements.storageButton.addEventListener("click", () => {
+    const cost = getStorageCost(user.storageLevel);
+    if (user.balance >= cost && user.storageLevel < 5) {
+      user.balance -= cost;
+      user.storageLevel++;
+      user.maxStorage += 500;
+      updateUI();
+      save();
+    }
+  });
+</script>
+
 </body>
 </html>
