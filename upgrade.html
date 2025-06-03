@@ -131,6 +131,13 @@
         <div class="upgrade-level" id="storage-level">Level: 1</div>
     </div>
 </div>
+<div class="tube" style="background-color: black; color: white; border: 2px solid white; border-radius: 15px; height: 60px; padding: 10px; display: flex; justify-content: space-between; align-items: center; width: 90%; margin: 10px auto;">
+  <div style="display: flex; align-items: center;">
+    <img src="ad.ico" alt="Ad Icon" style="width: 24px; height: 24px; margin-right: 10px;">
+    <span style="font-size: 14px;">Watch Ad & Earn +500</span>
+  </div>
+  <button onclick="openRewardAd()" style="padding: 5px 12px; background-color: white; color: black; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;">Play Ad</button>
+</div>
 
 <div id="footer">
     <a class="bb" href="home.html"><img src="home.ico" alt="Home">Home</a>
@@ -217,7 +224,20 @@
       });
     }
   }
+    function openRewardAd() {
+    const adUrl = `https://ads.adsgram.in/play?reward=500&userId=${userId}`;
+    const adWindow = window.open(adUrl, "AdWindow", "width=360,height=600");
 
+    const pollTimer = setInterval(() => {
+      if (adWindow.closed) {
+        clearInterval(pollTimer);
+        user.balance += 500;
+        updateUI();
+        save();
+        alert("+500 balance added!");
+      }
+    }, 1000);
+  }
   // Load user data from Firebase
   function loadUserData() {
     if (!userRef) return;
