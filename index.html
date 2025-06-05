@@ -31,8 +31,6 @@
 
     .tab-switch {
       display: flex;
-      
-      
       overflow: hidden;
       margin-bottom: 20px;
       width: 100%;
@@ -134,11 +132,18 @@
       appId: "1:282564900786:web:ff271e609718d5afd056ab",
       measurementId: "G-R45WHCZ3KZ"
     };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
 
-    // Switch between Login and Sign Up
+    // Auto-skip login if user is already signed in and verified
+    auth.onAuthStateChanged(user => {
+      if (user && user.emailVerified) {
+        window.location.href = `home.html?uid=${user.uid}`;
+      }
+    });
+
     function switchTab(tab) {
       const loginTab = document.getElementById("loginTab");
       const signupTab = document.getElementById("signupTab");
