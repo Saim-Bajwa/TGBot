@@ -16,6 +16,49 @@
     body {
       font-family: Arial, sans-serif;
     }
+    #splashScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeInOut 3s ease forwards;
+}
+
+#splashScreen img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+}
+
+#splashScreen h1 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#splashScreen p {
+  color: gray;
+  font-size: 1rem;
+  text-align: center;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
 
     .header {
       position: relative;
@@ -287,6 +330,12 @@
   </style>
 </head>
 <body>
+  <div id="splashScreen">
+  <img src="face.ico" alt="Splash Icon" />
+  <h1>Troll Face Token</h1>
+  <p>Developed by Saim</p>
+</div>
+
   <div id="loadingOverlay">
     <div class="loadingBox">
       <div class="spinner"></div>
@@ -477,6 +526,19 @@
     img.style.width = "20px";
     container.appendChild(img);
     setTimeout(() => container.removeChild(img), 1000);
+  }
+ const splash = document.getElementById("splashScreen");
+
+  if (!sessionStorage.getItem("splashShown")) {
+    // Show splash screen and set session flag
+    splash.style.display = "flex";
+    sessionStorage.setItem("splashShown", "true");
+    setTimeout(() => {
+      splash.style.display = "none";
+    }, 3000);
+  } else {
+    // Skip splash screen
+    splash.style.display = "none";
   }
 </script>
 
