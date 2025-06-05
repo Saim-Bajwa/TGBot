@@ -1,138 +1,198 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>UPGRADES</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: white;
-      margin: 0; padding: 20px;
+    <meta charset="utf-8">
+    <title>UPGRADES</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; background-color: black; }
+        body { font-family: Arial, sans-serif; }
+        .header {
+            display: flex; align-items: center; justify-content: center;
+            color: white; height: 50px; border: 2px solid white;
+            border-radius: 20px; margin: 20px; padding: 0 20px;
+            gap: 10px; font-size: 10px;
+        }
+        .header img { height: 30px; width: 30px; }
+        .container {
+            margin: 20px auto; padding: 20px; border: 2px solid white;
+            border-radius: 20px; height: 450px; width: 90%;
+            text-align: center; color: white; display: flex;
+            flex-direction: column; gap: 20px;
+        }
+        .tube {
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: #cfcfc4; border-radius: 10px; padding: 5px 10px;
+            color: white; height: 100px; width: 90%; margin: 0 auto; position: relative; border: 3px solid white;
+        }
+        .tube .upgrade-level {
+            position: absolute; bottom: 0px; left: 0px; font-size: 12px;
+            color: white; border-radius: 5px; border: 2px solid white; padding: 2px; backround-color: #808080;
+        }
+        .tube button {
+            height: 40px; width: 80px; background-color: #454444;
+            border: none; border-radius: 10px; color: white; cursor: pointer;
+        }
+        .tube button.disabled {
+            background-color: gray; cursor: not-allowed;
+        }
+        #footer {
+            position: fixed; bottom: 0; width: calc(100% - 40px);
+            display: flex; justify-content: space-around; align-items: center;
+            background-color: black; border: 2px solid white; border-radius: 10px;
+            padding: 10px; margin: 20px;
+        }
+    .bb {
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    .upgrade-section {
-      background: #1e1e1e;
-      border-radius: 12px;
-      padding: 20px;
-      width: 320px;
-      margin-bottom: 20px;
-    }
-    .upgrade-section > div {
-      margin-bottom: 10px;
-    }
-    button {
-      background-color: #007bff;
-      border: none;
+      text-decoration: none;
       color: white;
-      padding: 10px 16px;
-      font-size: 16px;
-      border-radius: 8px;
       cursor: pointer;
-      width: 100%;
-      font-weight: bold;
+      font-size: 0.7rem;
     }
-    button.disabled {
-      background-color: #444;
-      cursor: not-allowed;
-    }
-    .tube {
-      background-color: black;
-      color: white;
-      border: 2px solid white;
-      border-radius: 15px;
-      height: 60px;
-      padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 320px;
-      margin: 20px auto 0 auto;
-    }
-    .tube div {
-      display: flex;
-      align-items: center;
-    }
-    .tube img {
-      width: 24px;
-      height: 24px;
-      margin-right: 10px;
-    }
-    .tube button {
-      background-color: white;
-      color: black;
-      border-radius: 10px;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      padding: 5px 12px;
-      width: auto;
-    }
-  </style>
 
-  <!-- AdsGram SDK -->
-  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    .bb img {
+      height: 40px;
+      width: 40px;
+      margin-bottom: 5px;
+    }
+        .lm, .nm {
+            color: black; background-color: white; border: 2px solid white;
+            border-radius: 10px; margin: 5px; font-size: 10px;
+            height: 50px; width: 70px; align-items: center;
+            justify-content: center; padding-top: 5px; border: 1px solid #cfcfc4;
+        }
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loadingBox {
+      width: 100px;
+      height: 100px;
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      border: 6px solid white;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    </style>
 </head>
 <body>
-  <h1>Upgrades</h1>
-
-  <div class="upgrade-section">
-    <div>Profit per Tap Level: <span id="profitTapLevel">Level: 1</span></div>
-    <div>Profit Tap Upgrade Cost: <span id="profitTapCost">Cost: 1000</span></div>
-    <button id="profitTapButton">Upgrade Profit per Tap</button>
-  </div>
-
-  <div class="upgrade-section">
-    <div>Storage Level: <span id="storageLevel">Level: 1</span></div>
-    <div>Storage Upgrade Cost: <span id="storageCost">Cost: 1000</span></div>
-    <button id="storageButton">Upgrade Storage</button>
-  </div>
-
-  <!-- Ad reward section -->
-  <div class="tube">
-    <div>
-      <img src="https://cdn-icons-png.flaticon.com/512/565/565547.png" alt="Ad Icon" />
-      <span>Watch Ad & Earn +500 Balance</span>
+<div id="loadingOverlay">
+    <div class="loadingBox">
+      <div class="spinner"></div>
+    
     </div>
-    <button id="adButton">Play Ad</button>
-  </div>
+</div>    
+<header class="header">
+    <img src="img.ico" alt="Logo">
+    <h1>UPGRADES</h1>
+</header>
 
-  <script>
-  // User data (simulate user data object)
-  let user = {
-    balance: 10000,
-    profitPerTapLevel: 1,
-    profitPerTap: 1,
-    storageLevel: 1,
-    maxStorage: 500,
+<div class="container">
+    <div class="tube" id="profit-tap-tube">
+        <span class="lm">Profit Per Tap</span>
+        <span class="lm" id="profit-tap-cost">Cost: 20</span>
+        <button id="profitTapUpgrade">Upgrade</button>
+        <div class="upgrade-level" id="profit-tap-level">Level: 1</div>
+    </div>
+
+    <div class="tube" id="storage-tube">
+        <span class="nm">Max Storage</span>
+        <span class="nm" id="storage-cost">Cost: 1000</span>
+        <button id="storageUpgrade">Upgrade</button>
+        <div class="upgrade-level" id="storage-level">Level: 1</div>
+    </div>
+</div>
+
+<div id="footer">
+    <a class="bb" href="home.html"><img src="home.ico" alt="Home">Home</a>
+    <a class="bb" href="upgrade.html"><img src="upgrades.ico" alt="Upgrades">Upgrades</a>
+    <a class="bb" href="about.html"><img src="about.ico" alt="About">About</a>
+    <a class="bb" href="fren.html"><img src="frens.ico" alt="Friends">Friends</a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+  // Your Firebase config object
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-c5O7UhWGSEksgsoOFXuOZgZXL7U9i9s",
+    authDomain: "tg-bot-user.firebaseapp.com",
+    databaseURL: "https://tg-bot-user-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "tg-bot-user",
+    storageBucket: "tg-bot-user.appspot.com",
+    messagingSenderId: "282564900786",
+    appId: "1:282564900786:web:ff271e609718d5afd056ab"
   };
 
-  // Cost calculation functions
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  // DOM elements
+  const elements = {
+    profitTapButton: document.getElementById("profitTapUpgrade"),
+    storageButton: document.getElementById("storageUpgrade"),
+    profitTapCost: document.getElementById("profit-tap-cost"),
+    storageCost: document.getElementById("storage-cost"),
+    profitTapLevel: document.getElementById("profit-tap-level"),
+    storageLevel: document.getElementById("storage-level")
+  };
+  const loadingOverlay = document.getElementById("loadingOverlay");
+
+  // User data default values
+  let user = {
+    balance: 0,
+    profitPerTap: 1,
+    maxStorage: 100,
+    profitPerTapLevel: 1,
+    storageLevel: 1
+  };
+
+  let userId = null;
+  let userRef = null;
+
+  // Upgrade cost functions
   function getProfitCost(level) {
-    return 1000 + (level - 1) * 2000;
+    return 20 * Math.pow(2, level - 1);
   }
+
   function getStorageCost(level) {
     return 1000 + (level - 1) * 3000;
   }
 
-  // UI elements
-  const elements = {
-    profitTapCost: document.getElementById('profitTapCost'),
-    storageCost: document.getElementById('storageCost'),
-    profitTapLevel: document.getElementById('profitTapLevel'),
-    storageLevel: document.getElementById('storageLevel'),
-    profitTapButton: document.getElementById('profitTapButton'),
-    storageButton: document.getElementById('storageButton'),
-    adButton: document.getElementById('adButton'),
-  };
-
-  // Update UI function
+  // Update UI based on user data
   function updateUI() {
     const profitCost = getProfitCost(user.profitPerTapLevel);
     const storageCost = getStorageCost(user.storageLevel);
@@ -149,49 +209,46 @@
     elements.storageButton.classList.toggle("disabled", user.balance < storageCost || user.storageLevel >= 5);
   }
 
-  // Simulated save function (replace with your Firebase or backend save logic)
+  // Save user data to Firebase
   function save() {
-    console.log("User data saved", user);
-    // Example: firebase.database().ref("users/" + userId).set(user)
+    if (userRef) {
+      userRef.set(user).catch(err => {
+        console.error("Error saving user data:", err);
+      });
+    }
   }
 
-  // AdsGram rewarded ads integration with safe environment checking
-  let AdController;
-  window.addEventListener('load', () => {
-    if (window.Adsgram && typeof window.Adsgram.init === 'function') {
-      // Replace '11592' with your actual AdsGram blockId for rewarded ads
-      AdController = window.Adsgram.init({ blockId: '11592' });
+  // Load user data from Firebase
+  function loadUserData() {
+    if (!userRef) return;
+
+    userRef.once("value").then(snapshot => {
+      if (snapshot.exists()) {
+        user = { ...user, ...snapshot.val() };
+      } else {
+        // Initialize with default if no data exists yet
+        save();
+      }
+      updateUI();
+      loadingOverlay.style.display = "none";
+    }).catch(err => {
+      console.error("Error loading user data:", err);
+    });
+  }
+
+  // Listen for Firebase Authentication state changes
+  auth.onAuthStateChanged(currentUser => {
+    if (currentUser) {
+      userId = currentUser.uid;
+      userRef = db.ref("users/" + userId);
+      loadUserData();
     } else {
-      console.warn("Adsgram SDK not loaded or Adsgram.init not available");
+      alert("Please log in to access your upgrades.");
+      // Optional: redirect to login page or show login UI
     }
   });
 
-  // Function to open and show rewarded ad with safety checks
-  function openRewardAd() {
-    if (AdController && typeof AdController.show === 'function') {
-      AdController.show().then(() => {
-        // User watched the ad fully, reward balance
-        user.balance += 500;
-        updateUI();
-        save();
-        alert("+500 balance added!");
-      }).catch((error) => {
-        console.error("Ad error:", error);
-        alert("Ad failed to play or was skipped.");
-      });
-    } else {
-      alert("Ad system not initialized yet. Please try again in a moment.");
-    }
-  }
-
-  // Optional: Telegram WebApp safe initialization (if you use Telegram SDK)
-  if (window.Telegram && window.Telegram.WebApp) {
-    Telegram.WebApp.ready();
-  } else {
-    console.log("Not inside Telegram WebApp or Telegram SDK not loaded");
-  }
-
-  // Button event listeners
+  // Event listener for profit per tap upgrade button
   elements.profitTapButton.addEventListener("click", () => {
     const cost = getProfitCost(user.profitPerTapLevel);
     if (user.balance >= cost) {
@@ -203,6 +260,7 @@
     }
   });
 
+  // Event listener for storage upgrade button
   elements.storageButton.addEventListener("click", () => {
     const cost = getStorageCost(user.storageLevel);
     if (user.balance >= cost && user.storageLevel < 5) {
@@ -213,11 +271,6 @@
       save();
     }
   });
-
-  elements.adButton.addEventListener("click", openRewardAd);
-
-  // Initialize UI on load
-  updateUI();
 </script>
 
 </body>
